@@ -1,0 +1,32 @@
+.displayClass {
+    background: #ffffff;
+    font-family: PingFangSC-Regular;
+    font-size: 1.17rem;
+    color: #00A0E9;
+    border-bottom: 1px solid #e1e1e1;
+    border-top: 1px solid  #e1e1e1;
+}
+.displayClasschang {
+    background: #ffffff;
+    font-family: PingFangSC-Regular;
+    font-size: 1.17rem;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.noneClass {
+    background: #F5f5f5;
+    font-family: PingFangSC-Regular;
+    font-size: 1.17rem;
+    color:  #333333;
+    border-bottom: none;
+    border-top: none;
+}
+.displayClasswhite {
+    background: #ffffff;
+    font-family: PingFangSC-Regular;
+    font-size: 1.17rem;
+    color: #333333;
+}
+.kkk {
+    font-size: 1.17rem;
+}

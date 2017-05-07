@@ -1,0 +1,87 @@
+.recomConented {
+    border-top: 1px solid #E1E1E1;
+  /*  height: calc(100% - 0.004rem);*/
+    background-color: #f5f5f5;
+  /*  overflow-y: scroll;*/
+    overflow-scrolling: touch;
+
+}
+.recomConented .RecomComponent {
+    width: 100%;
+    height: 5.29rem;
+    position: relative;
+   /* overflow: hidden;*/
+    background-color: #ffffff;
+}
+.RecomComponent .componentImage{
+    width: 3.33rem;
+    height: 3.33rem;
+    background: url("../../images/originImage.png") no-repeat center center;
+    background-size: 3.33rem 3.33rem;
+    margin-left: 1rem;
+    margin-top: 1rem;
+    display: inline-block;
+    float: left;
+}
+.RecomComponent span{
+     float: left;
+     display: block;
+    margin-left:1rem;
+    margin-top: 1.1rem;
+    color: #333333;
+    font-size: 1.33rem;
+}
+.RecomComponent .address {
+    position: absolute;
+    top: 3.1rem;
+    left:6.33rem;
+    color: #999999;
+    font-size: 1rem;
+    overflow: hidden;
+    whiteSpace:nowrap;
+    text-overflow: ellipsis;
+}
+.RecomComponent b {
+    display: block;
+    width: 0.67rem;
+    height: 0.83rem;
+    position: absolute;
+    background: url("../../images/positionOne.png") no-repeat center center;
+    background-size: 0.67rem 0.83rem;
+    top: 3.34rem;
+    left: 5.33rem;
+}
+.RecomComponent .classBorder {
+    position: absolute;
+    bottom: 0rem;
+    width:30.25rem;
+    margin-left:1rem;
+    border: 1px solid #D8D8D8 ;
+}
+
+.noneOrginRecom{
+    width: 100%;
+    padding-top: 6rem;
+}
+.noneOrginRecom   .noneOrginImage {
+     text-align: center;
+
+}
+.noneOrginRecom .noneOrginImage  img{
+    display: block;
+    width: 8.33rem;
+    height: 7.5rem;
+    margin: 0 auto;
+}
+.noneOrginRecom .noneOrginImage span {
+    font-size: 1.33rem;
+    text-align: center;
+    padding-top: 1.6rem;
+    color: #999999;
+}
+/*正在加载数据*/
+.loadData {
+    width: 100%;
+    padding-top: 2.72rem;
+    text-align: center;
+}

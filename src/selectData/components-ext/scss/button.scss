@@ -1,0 +1,59 @@
+
+$height: 30px;
+
+.button {
+  width: auto;
+  overflow: visible;
+  outline: none;
+  border-radius: 5px;
+}
+
+.button-primary {
+  text-align: left;
+  text-indent: 1rem;
+  width:100%;
+  height: 3.67rem;
+  line-height: 3.67rem;
+  background-color:#FFFFFF;
+  font-family: PingFangSC-Regular;
+  font-size: 1.33rem;
+  color: #333333;
+  background: url("../../../images/findArrow.png") no-repeat 29.58rem 1.25rem;
+  border-bottom: 1px solid #e1e1e1;
+  border-top: 1px solid #e1e1e1;
+  border-left: none;
+  border-right: none;
+}
+
+.button-large {
+  width: 80%;
+  height: $height;
+  color: #fff;
+  background-color: #f0ad4e;
+  border-color: #eea236;
+}
+
+.button-small {
+  width: 66px;
+  height: $height;
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.btn {
+  display: inline-block;
+  margin-bottom: 0;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-transform: none;
+  outline: none;
+}
+

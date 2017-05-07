@@ -1,0 +1,28 @@
+.autoDiv{
+    width:200px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background:#eee;
+    line-height:20px;
+    margin-left:200px;
+}
+.autoDiv:after,.autoDiv:before{
+    content:' ';
+    height:0;
+    display: block;
+    overflow: hidden;
+    clear: both;
+}
+.autoDiv p {
+    float:left;
+    background:#999;
+    margin:5px;
+    padding:0 10px;
+    max-width:calc(100% - 10px);
+    overflow: hidden;
+    display:block;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    box-sizing:border-box;
+}

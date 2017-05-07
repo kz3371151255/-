@@ -1,0 +1,40 @@
+.selectRegion  {
+      height: 3.33rem;
+      line-height: 3.33rem;
+      background-color: #ffffff;
+      font-family:  PingFangSC-Regular;
+      text-indent: 1rem ;
+      border-bottom: 1px solid #e1e1e1;
+}
+ span {
+     font-size: 1.17rem;
+ }
+.selectRegion span:nth-of-type(2){
+    font-size: 1.17rem;
+    color: #666666;
+    ont-family:PingFangSC-Regular;
+}
+.selectRegion span:last-child{
+    color: #333;
+    font-size: 1.17rem;
+    line-height: 1.17rem;
+    margin-top: 1.17rem;
+    height: 0.67rem;
+    margin-right:1rem;
+    float: right;
+    padding-right: 2rem;
+    background-size: 1.17rem 0.67rem ;
+}
+.selectRegion .regionDown {
+    background: url("../images/graydown.png") no-repeat right center;
+}
+.selectRegion .regionUp {
+    background: url("../images/grayup.png") no-repeat right center;
+}
+.tralvelDetail {
+    width: 100%;
+    height: calc(100% - 7.33rem);
+    overflow-y: scroll;
+    position: fixed;
+    top: 7.33rem;
+}

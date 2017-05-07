@@ -1,0 +1,11 @@
+.slide-a {
+	display: block;
+	float: left;
+	height: 5.25rem;
+}
+
+.slide-li {
+	padding-top: 40%;
+	height: 5.25rem;
+	background-size:100% 5.25rem;
+}

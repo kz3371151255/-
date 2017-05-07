@@ -1,0 +1,180 @@
+.containerBox{
+    height: 100%;
+    overflow-y:scroll ;
+    overflow-scrolling: touch;
+    width: 100%;
+    position: absolute;
+}
+.container{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: #F5f5f5;
+}
+/*没有加入组织*/
+.masksDisplay {
+    background: rgba(0,0,0,0.50);
+    position: fixed;
+    z-index: 999;
+    height: 100%;
+    width: 100%;
+}
+.masksnone {
+    display: none;
+}
+.masksPrompt {
+    width: 75%;
+    height: 4rem;
+    line-height: 4rem;
+    margin: 72% auto;
+    font-size: 1.33rem;
+    color: #333333;
+    text-align: center;
+    border-radius: 1rem ;
+    background: #FFFFFF;
+    font-family: PingFangSC-Regular;
+}
+.app{
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    margin: 0 auto;
+}
+.app .maskFixed {
+    height: 21.92rem;
+    width: 100%;
+    background-color: #F5f5f5;
+    overflow: hidden;
+}
+.topSearch {
+    width: 100%;
+    height: 3.67rem;
+    background: #F5f5f5;;
+    overflow: hidden;
+}
+.search {
+    position: relative;
+    width: 95%;
+    height: 2.33rem;
+    line-height: 2.53rem;
+    margin:  0.67rem auto;
+    border-radius: 0.166rem;
+    cursor: pointer;
+    border: 1px solid  #E1E1E1;
+    background-color: #ffffff;
+    overflow: hidden;
+    text-align: center;
+}
+.search span:first-child{
+    vertical-align: middle;
+    display: inline-block;
+    position: relative;
+    font-family: PingFangSC-Regular;
+    font-size: 1.17rem;
+    color: #999999;
+
+}
+.upStreams,.travalStreams,.downStreams {
+    cursor: pointer;
+}
+
+.search span:first-child img{
+    position: absolute;
+    top: 0.6rem;
+    width: 1.17rem;
+    height:1.17rem;
+    left: -1rem;
+
+}
+
+.appheader{
+    height: 8.25rem;
+    width: 100%;
+    z-index: 2;
+    margin: 0rem auto;
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #e1e1e1;
+    border-top: 1px solid #e1e1e1;
+}
+.appheader a {
+    cursor: pointer;
+}
+.appheader [class$='Streams']{
+      position: relative;
+      height: 8.25rem;
+      width: 33%;
+      float: left;
+      text-align: center;
+}
+.appheader [class$='Streams'] span {
+     position: absolute;
+     border: 1px solid #e1e1e1;
+     height: 3.83rem;
+     top:2.25rem ;
+     left: 103%;
+}
+.appheader .downStreams {
+    border: 0rem;
+}
+.appheader [class$='Stream'] {
+    margin: 0 auto;
+    width: 3.33rem;
+    height: 3.33rem;
+    margin-top: 1.5rem;
+    margin-bottom:1rem ;
+}
+
+.appheader  [class$='Stream']  img {
+      width: 99%;
+      height: 99%;
+}
+
+.appheader a{
+    color: black;
+    line-height: 0rem;
+    font-size: 1.17rem;
+    color: #333333;
+}
+.appheader a:hover{
+    color: gold;
+    font-weight: 700;
+}
+.carousel{
+    width: 100%;
+    height: 5.25rem;
+    margin-top: 0.67rem;
+    margin-bottom: 0.67rem;
+}
+.recomConent {
+   /* height: calc(100% - 22.05rem);*/
+    background-color: #f5f5f5;
+    overflow: hidden;
+}
+.recommend {
+    width: 100%;
+    height: 3.25rem;
+    background-color: #FFFFFF;
+    line-height: 3.33rem;
+    color: #999999;
+    font-size: 1.17rem;
+    border-bottom: 1px solid  #E1E1E1;
+    border-top:1px solid  #E1E1E1 ;
+    text-indent: 0.68rem;
+}
+.recommend span:first-child{
+    display: block;
+    float: left;
+    width: 0.14rem;
+    height: 3.33rem;
+    background-color: #3399E2 ;
+}
+.recommend span:last-child {
+    margin-left: 0.83rem;
+}
+.recom {
+    width: 100%;
+    height: 1.875rem;
+}
+
+
+

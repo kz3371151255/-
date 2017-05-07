@@ -1,0 +1,1 @@
+{"version":3,"sources":["PullUpLoad.js"],"names":[],"mappings":";;AAGA;;;;AACA","file":"PullUpLoad-compiled.js","sourcesContent":["/**\r\n * Created by cvtt on 2017/5/2.\r\n */\r\nimport React,{Component} from  'react'\r\nimport './PullUpLoad.css'\r\n"]}

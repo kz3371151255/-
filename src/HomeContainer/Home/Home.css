@@ -1,0 +1,175 @@
+.upStream {
+    width: 100%;
+    height: 100%;
+}
+.upStream .selectIndustry{
+    width: 100%;
+    height: 3.92rem;
+    border-top: 1px solid #e1e1e1;
+    border-bottom: 1px solid #e1e1e1;
+    background-color:  #FFFFFF;
+}
+.selectIndustry span:first-child{
+    display: block;
+    max-width: 60%;
+    font-size:1.17rem;
+    color: #333333;
+    float: left;
+    margin-top: 1.5rem;
+    margin-left: 1rem;
+    color: #333333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.selectIndustry span:last-child{
+    display: block;
+    font-size: 1.17rem;
+    float: right;
+    margin-top: 1.42rem;
+    margin-right: 1.17rem;
+    color: #3399E2;
+}
+.Corresponding {
+    width: 100%;
+    height: 3.29rem;
+    background-color:#FFFFFF;
+    border-bottom: 1px solid #e1e1e1;
+}
+.Corresponding .rotateDown {
+    background: url("../../images/graydown.png") no-repeat right center ;
+}
+.Corresponding span:first-child{
+    font-size: 1.17rem;
+    line-height: 1.17rem;
+    margin-top: 1.17rem;
+    margin-left: 3.46rem;
+    float: left;
+    padding-right: 2rem;
+    background-size: 1.17rem 0.67rem ;
+}
+.Corresponding .rotateUp {
+    color: #00A0E9;
+    background: url("../../images/grayup.png") no-repeat right center ;
+}
+.Corresponding .regionDown {
+    color: #333333;
+    background: url("../../images/graydown.png") no-repeat right center;
+}
+.Corresponding .regionUp {
+    color: #00A0E9;
+    background: url("../../images/grayup.png") no-repeat right center;
+}
+.Corresponding span:last-child{
+    font-size: 1.17rem;
+    line-height: 1.17rem;
+    margin-top: 1.17rem;
+    margin-right:5.33rem;
+    float: right;
+    padding-right: 2rem;
+    background-size: 1.17rem 0.67rem ;
+}
+.default {
+    position: relative;
+    width: 100%;
+    height: 2.29rem;
+    border-bottom: 1px  solid #e1e1e1;
+}
+.default  div {
+    width: 50%;
+    float: left;
+    text-align: center;
+    color: #999999;
+    font-size: 1rem;
+    line-height: 2.33rem;
+}
+
+.default .streamBorder {
+    position: absolute;
+    width: 1px;
+    height: 1.33rem;
+    background-color: #e1e1e1;
+    left: 50%;
+    top: 25%;
+    transform: translate(50% );
+}
+/*对应的上游的*/
+
+.responseIndustryNone {
+    display: none;
+}
+.responseIndustryBlock{
+    position: relative;
+    display: block;
+    height:calc(100% - 9.93rem);
+    background-color: rgba(0,0,0,0.5);
+    z-index: 87;
+}
+/*上游对应的行业*/
+ .resopnseIndustry {
+   background: #F5f5f5;
+   position: relative;
+    height: 28rem;
+    overflow-y: scroll;
+    overflow-scrolling: auto;
+    width: 100%;
+    z-index: 88;
+}
+.resopnseIndustry .UpstreamIndustryContainer {
+    width: 100%;
+    background: #ffffff;
+}
+.resopnseIndustry .UpstreamIndustry {
+    width: 98%;
+    height: 3.67rem;
+    line-height: 3.67rem;
+    float: right;
+    border-bottom:1px solid #e1e1e1 ;
+}
+.upStreamDetail {
+    width: 100%;
+    height: calc(100% - 9.763rem);
+    overflow-y: scroll;
+    position: absolute;
+    top: 9.763rem ;
+}
+/*对应地区*/
+.RegionSet {
+    width: 100%;
+    height: 28rem;
+    overflow: hidden;
+}
+.RegionSet .RegionSetContainer {
+    max-height: 28rem;
+    overflow-y:scroll ;
+    overflow-scrolling: touch;
+    overflow-x: hidden;
+    font-family: PingFangSC-Regular;
+    font-size: 1.17rem;
+    color: #333333;
+}
+/*二级地区边框显示隐藏 当第一级进行点击的时候*/
+.borderchangDis  {
+    line-height: 3.63rem;
+    height: 3.63rem;
+    font-family: PingFangSC-Regular;
+    font-size: 1.17rem;
+    border-bottom: 1px  solid #e1e1e1;
+}
+.borderchangnone  {
+    line-height: 3.63rem;
+    height: 3.63rem;
+    font-family: PingFangSC-Regular;
+    font-size: 1.17rem;
+    color: #333333;
+}
+/*上面的盒子*/
+.upStreamTopbox{
+    width: 100%;
+}
+
+
+
+
+
+
