@@ -27,6 +27,7 @@ module.exports = {
         proxy: {
             '/lianzi/**': {
                 target: 'https://lz.lianziapp.com',
+               /* target: 'http://192.168.1.204:8098',*/
                 secure: false,
                 changeOrigin: true
             }

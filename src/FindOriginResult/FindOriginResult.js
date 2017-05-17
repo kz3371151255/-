@@ -9,6 +9,7 @@ import React, { Component } from 'react'
 import './css/Find.css'
 import service from '../services/movieService.js'
 import {RecomData} from '../recomConent/data/recom.js'
+
 class RecomConent extends Component {
     constructor(props) {
         super(props)
@@ -18,6 +19,7 @@ class RecomConent extends Component {
             detailData:[],
             lastOrgId:'',
             response:false,
+            detailLength:'',
             messages:{
                 keyword: '',
                 industryId: '',
@@ -30,10 +32,12 @@ class RecomConent extends Component {
     }
     componentWillMount(){
         document.title = '搜索结果'
+
     }
     componentDidMount(){
         let strMessages =  JSON.parse(this.props.params.strMessage)
-        console.log(strMessages)
+
+            strMessages.userId = JSON.parse(localStorage.getItem('localUserId')).userId
         this.fetch(strMessages)
     }
 
@@ -97,17 +101,27 @@ class RecomConent extends Component {
     fetch = (messages,beginOrgId) => {
 
         var _this = this // 保存全局 this
+
         let message = Object.assign({}, messages)
         message.beginOrgId = this.state.lastOrgId && beginOrgId
         let detailData = [].concat(this.state.detailData)
         let strMessage  = JSON.stringify(message)
         const promise = service.getSearchResult(strMessage)
         promise.then((json) => { // 获取到数据遮罩去掉
-            if(json ==''){
+            if(json =='' && this.state.lastOrgId == ''){
                 this.setState({response:true,isLoading:false})
                 return
             }
-            json = JSON.parse(json) || RecomData
+            if(json ==''){
+                _this.setState({ // 同步还是异步
+                    isLoading: false,
+                    detailData: detailData,
+                    detailLength:detailData.length-1,
+                    messages: message,
+                    isButton:false
+                })
+            }
+            json = JSON.parse(json)
             _this.setState({datamessage: json})
             _this.setState({lastOrgId: json.lastOrgId})
             if (detailData.length > 0) {
@@ -119,7 +133,9 @@ class RecomConent extends Component {
             _this.setState({ // 同步还是异步
                 isLoading: false,
                 detailData: detailData,
+                detailLength:detailData.length-1,
                 messages: message,
+                isButton:false
             })
         }),reason =>{
             console.log(reason)
@@ -136,25 +152,43 @@ class RecomConent extends Component {
             </div>
         )
     }
+    handleLoading =()=>{
+        return (
+            <div className='isLoading'><img src="../../images/isLoading.png" alt=""/></div>
+        )
+    }
+    handleClickRefresh =()=>{
+        let strMessages =  JSON.parse(this.props.params.strMessage)
+        strMessages.userId = JSON.parse(localStorage.getItem('localUserId')).userId
+        this.fetch(strMessages)
+    }
+    handleInternet =()=>{
+        return<div className='internet' onClick={this.handleClickRefresh}>
+            <div className='internetImage'>
+                <img src={require('../images/internet.png')} alt="网络断开链接请检查网络设置" title='网络断开链接请检查网络设置'/>
+                <span>网络异常,请检查网络设置</span>
+            </div>
+        </div>
+    }
     // 渲染数据方法中
-    handelRender =(item)=>{
+    handelRender =(item,index)=>{
         if(item.orgPortrait == null ){
             var orgPortrait = require('../images/originImage.png')
         }else {
             orgPortrait = item.orgPortrait
         }
-
         return(
             <div className='findComponent' key={item && item.orgId } onClick={this.getLianDataCard.bind(this,item.orgPortrait,item.orgId,item.orgRelationType,item.orgType,item.orgShortName,item.orgFullName,'','',item.orgIndustry,item.orgNetFlag)}>
                 <div className='componentImage' style={{background:'url('+orgPortrait+') no-repeat center center',backgroundSize:'3.33rem 3.33rem'}}></div>
                 <span>{item.orgShortName}</span>
                 <div className='address'>{item.officeAddressName}</div>
                 <b></b>
-                <div className='classBorder'></div>
+                <div className={this.state.detailLength == index?'classBorderall':'classBorder'} ></div>
             </div>
         )
     }
     handleRecomContent =()=>{
+
         return (
             <div className = 'findeResult' ref="scroll_container">
                 {this.state.detailData.map(this.handelRender)}
@@ -163,6 +197,12 @@ class RecomConent extends Component {
     }
     render() { // isloading ：数据没有获取到之前 显示数据加载，
 
+        if(!window.navigator.onLine){
+            return this.handleInternet()
+        }
+         if(this.state.isLoading){
+             return this.handleLoading()
+         }
         if(this.state.response ){
             return this.handleOrign()
         }

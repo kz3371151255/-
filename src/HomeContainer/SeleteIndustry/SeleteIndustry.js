@@ -8,6 +8,7 @@ import { Card } from '../../common/levelMenu/levelMenu.jsx'
 import  service from  '../../services/movieService.js'
 import {Industry} from'../../data/industry.js'
 import {browserHistory} from 'react-router'
+
 var uuu = navigator.userAgent;
 var isIos=!!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)==true;
 if(isIos){
@@ -37,10 +38,13 @@ export default class SeleteIndustry extends Component {
     componentWillMount(){ // 这里直接通过路由传递的useId值
         let selectIndustry = JSON.parse(this.props.params.userId)
         this.state.message.type = selectIndustry.type
+
         this.setState({userId:selectIndustry.userId})
 
         this.fetchSetIndustry()
         this.setState({local:this.getLianData.bind(this)()})
+
+
     }
     getLianData =()=>{// 拦截 android 和 ios 的 数据
         var uuu = navigator.userAgent;
@@ -72,6 +76,7 @@ export default class SeleteIndustry extends Component {
              handleSetObj.industryId = Id
              handleSetObj.industryName = Name
              handleSetObj.userId = JSON.parse(this.props.params.userId).userId
+             handleSetObj.onLine = true
         let  handleStr = JSON.stringify(handleSetObj)
         if(JSON.parse(this.props.params.userId).tralvel == 'tralvel') {
             browserHistory.push(`/container/movie/${handleStr}`)
@@ -92,6 +97,22 @@ export default class SeleteIndustry extends Component {
     handleTotalButton = ()=>{
            this.setState({totalShow:!this.state.totalShow})
     }
+    handleClickRefresh =()=>{
+        let selectIndustry = JSON.parse(this.props.params.userId)
+        this.state.message.type = selectIndustry.type
+
+        this.setState({userId:selectIndustry.userId})
+        this.fetchSetIndustry()
+
+    }
+    handleInternet =()=>{
+        return<div className='internet' onClick={this.handleClickRefresh}>
+            <div className='internetImage'>
+                <img src={require('../../images/internet.png')} alt="网络断开链接请检查网络设置" title='网络断开链接请检查网络设置'/>
+                <span>网络异常,请检查网络设置</span>
+            </div>
+        </div>
+    }
     render(){
 
         const styles = {
@@ -100,6 +121,10 @@ export default class SeleteIndustry extends Component {
             pHeight:{width:'82%',marginLeft:'4%',height:'4rem',lineHeight:'4rem',textIndent:'3rem',fontSize:'1.33rem',overflow: 'hidden', display:'block', whiteSpace:'nowrap', textOverflow:'ellipsis',borderBottom:'1px solid #e1e1e1'},
             pHeightTwolevel:{width:'86%',height:'4rem',lineHeight:'4rem',textIndent:'4rem',fontSize:'1.33rem',overflow: 'hidden', display:'block', whiteSpace:'nowrap', textOverflow:'ellipsis',borderBottom:this.state.currentBorder},
 
+        }
+
+        if(!window.navigator.onLine){
+            return this.handleInternet()
         }
         return(
             <div className='concernedIdustry'>
@@ -138,7 +163,7 @@ export default class SeleteIndustry extends Component {
                                 }}
                                 >
                                 {
-                                    value.industryList.map((val, index)=> {
+                                    value.industryList  &&  value.industryList.length > 0 &&  value.industryList.map((val, index)=> {
                                         return <Card
                                             key={index}
                                             icon={true}
@@ -151,11 +176,25 @@ export default class SeleteIndustry extends Component {
                                                 }else if(toggle) {
                                                          this.setState({currentBorder:'none'})
                                                 }
-                                                      let Number = 1 ;
-                                                      let region = JSON.parse(this.props.params.region).selectRegion
-                                                      let keyword = JSON.parse(this.props.params.region).keyword
 
-                                                    browserHistory.push(`/container/find/${val.industryId}+${val.instryName}+${Number}+${region}+${keyword}`)
+                                                if(typeof val.industryList == 'undefined' || val.industryList.length == 0){
+                                                    let industryObj = new Object()
+                                                        industryObj.industryId = val.industryId
+                                                        industryObj.industryName = val.instryName
+                                                        industryObj.industryMasks = 'true'
+                                                        industryObj.userId = JSON.parse(this.props.params.userId).userId
+                                                        let industryStr = JSON.stringify(industryObj)
+                                                         if(JSON.parse(this.props.params.userId).tralvel == 'tralvel') {
+
+                                                          browserHistory.push(`/container/movie/${industryStr}`)
+
+                                                            }else if(JSON.parse(this.props.params.userId).downStream == 'downStream') {
+                                                                browserHistory.push(`/container/downstream/${industryStr}`)
+                                                          }else {
+                                                                  browserHistory.push(`/container/home/${industryStr}`)
+                                                           }
+                                                }
+
                                              }}
                                             expandedIcon={<img src={require('../../images/grayup.png')}style={{width:'1.17rem',height:'0.67rem',marginLeft:'0.5rem',position:'absolute',right:'1rem'}}  />}
                                             noexpandedIcon={<img src={require('../../images/graydown.png')}style={{width:'1.17rem',height:'0.67rem',marginLeft:'0.5rem',position:'absolute',right:'1rem'}}/>}
@@ -163,7 +202,7 @@ export default class SeleteIndustry extends Component {
                                             contentStyle={styles.provinceTwoLevel}
                                             >
                                             {
-                                                val.industryList.map((vv, ii)=> {
+                                                val.industryList  && val.industryList.length > 0 && val.industryList.map((vv, ii)=> {
                                                     return <Card
                                                         key={ii}
                                                         icon={true}
@@ -177,11 +216,25 @@ export default class SeleteIndustry extends Component {
                                                               this.setState({currentBorder:'none'})
                                                         }
 
-                                                      let Number = 1 ;
-                                                      let region = JSON.parse(this.props.params.region).selectRegion
-                                                      let keyword = JSON.parse(this.props.params.region).keyword
+                                                     if(typeof vv.industryList == 'undefined' || vv.industryList.length == 0){
 
-                                                    browserHistory.push(`/container/find/${vv.industryId}+${vv.instryName}+${Number}+${region}+${keyword}`)
+                                                       let industryObj = new Object()
+                                                        industryObj.industryId = vv.industryId
+                                                        industryObj.industryName = vv.instryName
+                                                        industryObj.industryMasks = 'true'
+                                                        industryObj.userId = JSON.parse(this.props.params.userId).userId
+                                                        let industryStr = JSON.stringify(industryObj)
+                                                         if(JSON.parse(this.props.params.userId).tralvel == 'tralvel') {
+
+                                                          browserHistory.push(`/container/movie/${industryStr}`)
+
+                                                            }else if(JSON.parse(this.props.params.userId).downStream == 'downStream') {
+                                                                browserHistory.push(`/container/downstream/${industryStr}`)
+                                                          }else {
+                                                                  browserHistory.push(`/container/home/${industryStr}`)
+                                                           }
+                                                     }
+
                                              }}
                                                         expandedIcon={<img src={require('../../images/grayup.png')}style={{width:'1.17rem',height:'0.67rem',marginLeft:'0.5rem',position:'absolute',right:'1rem'}}  />}
                                                         noexpandedIcon={<img src={require('../../images/graydown.png')}style={{width:'1.17rem',height:'0.67rem',marginLeft:'0.5rem',position:'absolute',right:'1rem'}}/>}
@@ -189,13 +242,13 @@ export default class SeleteIndustry extends Component {
                                                         contentStyle={{paddingLeft:'rem',boxSizing:'border-box',backgroundColor:'#F5F5F5 ',borderBottom:'1px solid #E1E1E1'}}
                                                         >
                                                         {
-                                                            vv.industryList && vv.industryList.map((v, i)=> {
+                                                            vv.industryList && vv.industryList.length > 0  && vv.industryList.map((v, i)=> {
 
                                                                 return <Card
                                                                     key={i}
                                                                     icon={true}
                                                                     index={i}
-                                                                    content={ <p key={i}style={{height:'4rem',lineHeight:'4rem',borderBottom:'1px solid #E1E1E1',textIndent:'3rem',fontSize:'1.33rem',color:'#666666',overflow: 'hidden', display:'block', whiteSpace:'nowrap', textOverflow:'ellipsis'}}>
+                                                                    content={ <p key={i}style={{height:'4rem',lineHeight:'4rem',borderBottom:'1px solid #E1E1E1',textIndent:'5.5rem',fontSize:'1.33rem',color:'#666666',overflow: 'hidden', display:'block', whiteSpace:'nowrap', textOverflow:'ellipsis'}}>
                                                        {v.instryName}
                                                     </p>}
                                                                     handleIndutiyClick = {(index,toggle)=>{
@@ -205,13 +258,23 @@ export default class SeleteIndustry extends Component {
                                                            }else if(toggle) {
                                                                  this.setState({currentBorder:'none'})
                                                         }
-                                                         let region = JSON.parse(this.props.params.region).selectRegion
-                                                         let keyword = JSON.parse(this.props.params.region).keyword
-                                         let Number = 1
-                                                browserHistory.push(`/container/find/${v.industryId}+${v.instryName}+${Number}+${region}+${keyword}`)
+                                                        let industryObj = new Object()
+                                                        industryObj.industryId = v.industryId
+                                                        industryObj.industryName = v.instryName
+                                                        industryObj.industryMasks = 'true'
+                                                        industryObj.userId = JSON.parse(this.props.params.userId).userId
+                                                        let industryStr = JSON.stringify(industryObj)
+                                                         if(JSON.parse(this.props.params.userId).tralvel == 'tralvel') {
+
+                                                          browserHistory.push(`/container/movie/${industryStr}`)
+
+                                                            }else if(JSON.parse(this.props.params.userId).downStream == 'downStream') {
+                                                                browserHistory.push(`/container/downstream/${industryStr}`)
+                                                          }else {
+                                                                  browserHistory.push(`/container/home/${industryStr}`)
+                                                           }
                                             }}
-                                                                    expandedIcon={<b style={{width:'0px',height:'0px',marginTop:'18px'}}></b>}
-                                                                    noexpandedIcon={<b style={{width:'0px',height:'0px',marginTop:'18px'}}></b>}
+
                                                                     >
                                                                 </Card>
 

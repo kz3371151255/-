@@ -18,6 +18,8 @@ class RecomConent extends Component {
             datamessage:{},
             detailData:[],
             lastOrgId:'',
+            detailLength:'',
+            pullUp:1,
             messages:{
                 count:20,
                 beginOrgId:0,
@@ -33,19 +35,20 @@ class RecomConent extends Component {
     }
     componentWillMount(){
         this.state.messages.userId = parseInt(JSON.parse(this.props.userId).userId)
+
     }
     componentDidMount(){
 
         this.fetch(this.state.messages)
     }
     componentDidUpdate(){ //检测到state 和 props 变化就执行
-          if(this.refs.scroll_container){
+          if(this.props.pullUpLoading ){
               this.addEventListener()
+
           }
     }
 
     getLianDataCard =(Portrait,Id,RelationType,Type,ShortName,FullName,ContactName,Email,IndustryList,NetFlag,Th)=>{
-
 
            var Iosmess = Object.assign({},this.state.Ios)
             Iosmess.orgId = Id
@@ -80,11 +83,11 @@ class RecomConent extends Component {
     }
     addEventListener=()=>{
         const _this=this
+
         this.props.pullUpLoading.addEventListener('scroll',(e)=>{
 
-            e.stopPropagation
+            if(e.target.scrollHeight-2 <=e.target.scrollTop + e.target.offsetHeight){
 
-            if(e.target.scrollHeight <=e.target.scrollTop + e.target.offsetHeight){
                 if(_this.state.isButton){
                     return
                 }
@@ -94,7 +97,7 @@ class RecomConent extends Component {
                 }
 
                 _this.fetch(this.state.messages,this.state.lastOrgId)
-                _this.setState({isButton:true})
+                _this.setState({isButton:true,pullUp:++this.state.pullUp})
             }
         })
     }
@@ -102,13 +105,14 @@ class RecomConent extends Component {
         var _this = this // 保存全局 this
         let message = Object.assign({}, messages)
         message.beginOrgId = this.state.lastOrgId && beginOrgId
+        console.log(this.state.lastOrgId)
         const messageStr = JSON.stringify(message)
         let detailData = [].concat(this.state.detailData)
         const promise = service.getRecomConentData(messageStr)
 
         promise.then((json) => {
 
-            if(json =='' ){
+            if(json =='' && this.state.lastOrgId == '' ){
                 this.setState({response:true,isLoading:false})
                 return
             }
@@ -116,20 +120,33 @@ class RecomConent extends Component {
                 this.setState({response:true,isLoading:false})
                 return
             }
-            json = JSON.parse(json)
-            _this.setState({datamessage: json, isLoading: false})
-            _this.setState({lastOrgId: json.lastOrgId})
-            if (detailData.length > 0) {
-                detailData = detailData.concat(json.orgList)
-            } else {
-                detailData = json.orgList
+            if(json ==''){
+                _this.setState({ // 同步还是异步
+                    isLoading: false,
+                    detailData: detailData,
+                    detailLength:detailData.length-1,
+                    messages: message,
+                    isButton:false
+                })
+            }else {
+                json = JSON.parse(json)
+                _this.setState({datamessage: json, isLoading: false})
+                _this.setState({lastOrgId: json.lastOrgId})
+                if (detailData.length > 0) {
+                    detailData = detailData.concat(json.orgList)
+                } else {
+                    detailData = json.orgList
+                }
+                // 获取到数据之后 去掉遮罩 ，加载数据提示去掉
+                _this.setState({ // 同步还是异步
+                    isLoading: false,
+                    detailData: detailData,
+                    detailLength:detailData.length-1,
+                    messages: message,
+                    isButton:false
+                })
+
             }
-            // 获取到数据之后 去掉遮罩 ，加载数据提示去掉
-            _this.setState({ // 同步还是异步
-                isLoading: false,
-                detailData: detailData,
-                messages: message,
-            })
 
         }),reason =>{
             console.error('onRejected function called: ', reason )
@@ -147,7 +164,7 @@ class RecomConent extends Component {
         )
     }
     // 渲染数据方法中
-    handelRender =(item)=>{
+    handelRender =(item,index)=>{
 
         if(item.orgPortrait == null) {
             var orgPortrait = require('../images/originImage.png')
@@ -158,11 +175,11 @@ class RecomConent extends Component {
         return(
 
             <div className='RecomComponent' key={item && item.orgId } onClick={this.getLianDataCard.bind(this,item.orgPortrait,item.orgId,item.orgRelationType,item.orgType,item.orgShortName,item.orgFullName,'','',item.orgIndustry,item.orgNetFlag)}>
-                <div className='componentImage' style={{background:'url('+orgPortrait+') no-repeat center center'}}></div>
+                <div className='componentImage' style={{background:'url('+orgPortrait+') no-repeat center center',backgroundSize:'3.33rem 3.33rem'}}></div>
                 <span>{item.orgShortName}</span>
                 <div className='address'>{item.officeAddressName}</div>
                 <b></b>
-                <div className='classBorder'></div>
+                <div className={this.state.detailLength == index ?'classBorderAll':'classBorder'}></div>
             </div>
         )
     }

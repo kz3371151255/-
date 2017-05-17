@@ -14,13 +14,13 @@ class SlideDemo extends React.Component{
         getData:false,
         sliderStop:false
     }
-    componentWillMount(){ // ÔÚÒªÕÒÖ÷Ò³£¬½«ÂÖ²¥Í¼Êý¾ÝµÄ¼ÓÔØÍê³É
+    componentWillMount(){ // åœ¨è¦æ‰¾ä¸»é¡µï¼Œå°†è½®æ’­å›¾æ•°æ®çš„åŠ è½½å®Œæˆ
         this.props.orginer.orgHomePageADList.map(this.handleShowData)
     }
     componentDidMount(){
         const promise =service.handleGetImgUrl('url',JSON.stringify({x:9,y:9,osType:1}))
         promise.then(json=>{
-            json = JSON.parse(json)|| SlideData
+            json = JSON.parse(json)
             return json.orgHomePageADList.map(this.handleShowData)
         }),reason =>{
             console.log(reason)
@@ -45,7 +45,7 @@ class SlideDemo extends React.Component{
             let obj = new Object()
             obj.link = '#'
             obj.src = v.pictureUrl
-            optss.push(obj)
+            optss.push(obj)                
         })
         return <div className='soide' style={{width:'100%',height:'100%',overflow:'hidden'}}>
             {

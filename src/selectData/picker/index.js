@@ -21,7 +21,7 @@ export default class PickerDemo extends React.Component {
     componentWillMount(){
         document.title = '地区'
         this.setState({afterkeyWord:JSON.parse(this.props.params.industry).keyword})
-        console.log(this.state.afterkeyWord)
+
     }
 
     // 地址选择

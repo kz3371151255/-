@@ -1,13 +1,11 @@
 .modal-overlay {
-  position: fixed;
-  top: 0;
+  position: absolute;
   left: 0;
   bottom:0;
   z-index: 1000;
   width: 100%;
   .modal {
-    position: fixed;
-    top: calc(100% - 260px);
+    position: absolute;
     left: 0;
     bottom: 0;
     right: 0;

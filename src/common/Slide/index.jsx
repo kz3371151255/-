@@ -25,7 +25,7 @@ class Slide extends Component {
 		distance: 0, //移动距离
 		swiper: 30, //滑动滚动触发距离
 		index: 0,
-		length: this.props.opts.length,
+		length: this.props.opts.length,//数据的长度
 		continuous: true, //是否循环滚动
 		autoSlide: true,
 		slideSpeed: 3000
@@ -55,7 +55,7 @@ class Slide extends Component {
 	}
 
 	touchEnd (e) {
-		if(Math.abs(this.state.moveX) <= this.state.swiper) {
+		if(Math.abs(this.state.moveX) <= this.state.swiper) { // 当移动的距离小于30
 			this.slideFun('', '.5')
 		} else {
 			if(this.state.moveX > this.state.swiper) {
@@ -86,7 +86,9 @@ class Slide extends Component {
 
 		// 是否循环滚动
 		if(this.state.continuous) {
-			if(_index > this.state.length) {
+
+			if(_index > this.state.length) { //
+
 				this.scrollFun(_index, time)
 				//返回第一个
 				_index = 1

@@ -56,7 +56,7 @@
     position: relative;
     width: 95%;
     height: 2.33rem;
-    line-height: 2.53rem;
+    line-height: 2.33rem;
     margin:  0.67rem auto;
     border-radius: 0.166rem;
     cursor: pointer;
@@ -108,7 +108,8 @@
 }
 .appheader [class$='Streams'] span {
      position: absolute;
-     border: 1px solid #e1e1e1;
+     width: 1px;
+     background: #e1e1e1;
      height: 3.83rem;
      top:2.25rem ;
      left: 103%;
@@ -135,10 +136,7 @@
     font-size: 1.17rem;
     color: #333333;
 }
-.appheader a:hover{
-    color: gold;
-    font-weight: 700;
-}
+
 .carousel{
     width: 100%;
     height: 5.25rem;
@@ -157,7 +155,6 @@
     line-height: 3.33rem;
     color: #999999;
     font-size: 1.17rem;
-    border-bottom: 1px solid  #E1E1E1;
     border-top:1px solid  #E1E1E1 ;
     text-indent: 0.68rem;
 }
@@ -176,5 +173,53 @@
     height: 1.875rem;
 }
 
+.isLoading {
+    width: 100%;
+    height:1.25rem;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+   transform: translate(-50%,-50%);
 
+}
+.isLoading img {
+    width: 2.5rem;
+    height:2.5rem;
+    margin: 0 auto;
+    animation: rotate  3s linear infinite;
+}
 
+@keyframes rotate {
+    from   {
+        transform:rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.internet {
+    width: 100%;
+    height:100%;
+}
+.internet .internetImage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 16rem;
+    height:16rem;
+    margin: 0 auto;
+    text-align: center;
+}
+.internet img {
+    width: 8rem;
+    height:8rem;
+    margin: 0 auto;
+}
+.internet span {
+    font-family: PingFangSC-Regular;
+    font-size: 1.33rem;
+    color: #999;
+
+}

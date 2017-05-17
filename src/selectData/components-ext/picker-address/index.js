@@ -4,11 +4,11 @@ import { provins, citys, areas } from './address.js';
 import './index.scss';
 
 const propTypes = {
-  defaultValue: React.PropTypes.array.isRequired,
-  onConfirm: React.PropTypes.func.isRequired,
-  onCancel: React.PropTypes.func.isRequired,
-  onChange: React.PropTypes.func.isRequired,
-  visible: React.PropTypes.bool.isRequired,
+  defaultValue: React.PropTypes.array.isRequired, // 设置选择的数据
+  onConfirm: React.PropTypes.func.isRequired, // 点击完成按钮
+  onCancel: React.PropTypes.func.isRequired, // 默认地区的选择
+  onChange: React.PropTypes.func.isRequired, //改变的地区数据
+  visible: React.PropTypes.bool.isRequired, // 显示隐藏的切换
 }
 
 class PickerAddress extends React.Component {
@@ -18,17 +18,19 @@ class PickerAddress extends React.Component {
     this.address = [];
   }
 
-  initDefaultData () {
+  initDefaultData () { // 初始化数据
+
     this.data = {
-      provins: {
+      provins: { // 省的数据
         list: provins,
-        defaultValue: this.props.defaultValue[0],
+        defaultValue: this.props.defaultValue[0], // 数组中的第一位:表示的省级
         displayValue (name) {
+
           return name;
         }
       },
-      citys: {
-        list: citys[this.props.defaultValue[0]],
+      citys: { // 地区的数据
+        list: citys[this.props.defaultValue[0]],// 省级作为市级的key:匹配市级
         defaultValue: this.props.defaultValue[1],
         displayValue (name) {
           return name;
@@ -44,7 +46,7 @@ class PickerAddress extends React.Component {
     }
   }
 
-  handleChangeProvin (provin) {
+  handleChangeProvin (provin) {   // 只需要传递省份,就能匹配市，县
     this.data.provins = {
       list: provins,
       defaultValue: provin,
@@ -57,7 +59,7 @@ class PickerAddress extends React.Component {
       list: areas[citys[provin][0]],
       defaultValue: areas[citys[provin][0]][0],
     },
-    this.address = [];
+    this.address = []; // 省市县 推到同一个数组中
     this.address.push(provin);
     this.address.push(citys[provin][0]);
     this.address.push(areas[citys[provin][0]][0]);

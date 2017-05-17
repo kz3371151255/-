@@ -12,12 +12,13 @@ export default class UpstreamDetaildata extends Component {
                 industryId:'',
                 responseEmpty:false,
                 responseArr:[],
-                isLoading:true,
+                isLoading:true, // 在页面开始加载数据的时候,提示正在加载数据,切换请求的参数，同样进行提示
                 lastOrgId:'',
                 isIndential:'',
                 datamessage:{},
                 propsType:'',
                 baginOrgIdRelease:2,
+                detaiLength:'',
                 message:{
                     type:'',
                     count:20,
@@ -28,6 +29,7 @@ export default class UpstreamDetaildata extends Component {
             }
         }
     componentWillMount(){
+
         this.state.message.type = this.props.upStreamArr.type
     }
     // 当前子组件，获取行业id 地区 作为请求的参数获取数据
@@ -40,16 +42,17 @@ export default class UpstreamDetaildata extends Component {
         this.setState({propsType:nextProps.upStreamArr.type})
 
         if(nextProps.upStreamArr != this.props.upStreamArr) {//监测前后props属性有没有改变
-                //beginOrgId 是用来做下拉刷新,设置数据显示开始的位置,由于一个数据刷新完成以后，会给state lastorgId 设置上即，会保留，这样会设在下一个条件上,当更换条件的时候beginOrgId,就要的从头开始加载数据 (baginOrgIdRelease)
+                //beginOrgId 是用来做下拉刷新,设置数据显示开始的位置,由于一个数据刷新完成以后，会给state lastorgId 设置上即，会保留，这样会设在下一个条件上,当更换条件的时候beginOrgId,应该的从头开始加载数据 (baginOrgIdRelease)
 
             // 当前props属性值发生改变释放    isIndential = true
             let PropsUpStream = nextProps.upStreamArr
-            this.setState({industryName:PropsUpStream.industryName,industryId:PropsUpStream.industryId,isIndential:true,baginOrgIdRelease:++this.state.baginOrgIdRelease})
+            this.setState({industryName:PropsUpStream.industryName,industryId:PropsUpStream.industryId,isIndential:true,baginOrgIdRelease:++this.state.baginOrgIdRelease,isLoading:true})
             if(this.state.baginOrgIdRelease >9){
                 this.setState({baginOrgIdRelease:2})
             }
             let messages = Object.assign({},this.state.message)
             messages.industryId = PropsUpStream.industryId
+            this.state.message.industryId = PropsUpStream.industryId
             messages.region = PropsUpStream.region
             if(PropsUpStream.type){
                 messages.type = PropsUpStream.type
@@ -102,31 +105,33 @@ export default class UpstreamDetaildata extends Component {
         let messageStr = JSON.stringify(messageObj)
         let promise = service.getSearchResult(messageStr)
         promise.then((json)=>{
-
-            if(json ==''){
-                console.log('1111')
-
+            if(json =='' && this.state.lastOrgId  == ''){
                 this.setState({responseEmpty:true,isLoading:false})
                 return
             }
-            json = JSON.parse(json)
-           if(this.state.isIndential){//isIndential值为true,表示请求不同的数据
-               responseArr = []
-           }
-            if(responseArr.length>0){ // 数据刷新时执行
-
-                responseArr =  responseArr.concat(json.orgList)
-            }else{
-                responseArr =  json.orgList
-            }
-            if(this.state.baginOrgIdRelease >3 ){ // 当切换选择的条件  lastOrgId =''
-
-                this.setState({responseArr:responseArr,isLoading:false,lastOrgId:'',datamessage:json,responseEmpty:false})
+            if(json == ''){
+                this.setState({responseArr:responseArr,isLoading:false,responseEmpty:false,detaiLength:responseArr.length-1,isButton:false })
             }else {
+                json = JSON.parse(json)
+                this.setState({isButton:false})
 
-                this.setState({responseArr:responseArr,isLoading:false,lastOrgId:json.lastOrgId,datamessage:json,responseEmpty:false})
+                if(this.state.isIndential){//isIndential值为true,表示请求不同的数据
+                    responseArr = []
+                }
+                if(responseArr.length>0){ // 数据刷新时执行
+
+                    responseArr =  responseArr.concat(json.orgList)
+                }else{
+                    responseArr =  json.orgList
+                }
+                if(this.state.baginOrgIdRelease >3 ){ // 当切换选择的条件  lastOrgId =''
+
+                    this.setState({responseArr:responseArr,isLoading:false,lastOrgId:'',datamessage:json,responseEmpty:false,detaiLength:responseArr.length-1})
+                }else {
+
+                    this.setState({responseArr:responseArr,isLoading:false,lastOrgId:json.lastOrgId,datamessage:json,responseEmpty:false,detaiLength:responseArr.length-1 })
+                }
             }
-
 
         }),reason =>{
             console.log(reason)
@@ -165,6 +170,11 @@ export default class UpstreamDetaildata extends Component {
             }
         }
     }
+    handleLoading =()=>{
+        return (
+            <div className='isLoading'><img src="../../images/isLoading.png" alt=""/></div>
+        )
+    }
     handleUpStreamDetail =(item,index)=>{ // 搜索组织详细展示
         if(item.orgPortrait == null){
             var orgPortrait = require('../../images/originImage.png')
@@ -175,11 +185,11 @@ export default class UpstreamDetaildata extends Component {
         return(
 
             <div className='upStreamDetailOrgin' key={item && item.orgId } onClick={this.getLianDataCard.bind(this,item.orgPortrait,item.orgId,item.orgRelationType,item.orgType,item.orgShortName,item.orgFullName,'','',item.orgIndustry,item.orgNetFlag)}  >
-                <div className='upStreamImage' style={{background:'url('+orgPortrait+') no-repeat center center'}}></div>
+                <div className='upStreamImage' style={{background:'url('+orgPortrait+') no-repeat center center',backgroundSize:'3.33rem 3.33rem'}}></div>
                 <span>{item.orgShortName}</span>
                 <div className='upStreamaddress'>{item.officeAddressName}</div>
                 <b></b>
-                <div className='upStreamclassBorder'></div>
+                <div className={this.state.detaiLength == index?'upStreamclassBorderall':'upStreamclassBorder'}></div>
             </div>
         )
     }
@@ -202,6 +212,24 @@ export default class UpstreamDetaildata extends Component {
 
     }
      render(){
+
+
+         if(this.state.isLoading){
+              if(this.props.upStreamArr.onLine) {
+                  let PropsUpStream = this.props.upStreamArr
+
+                  let messages = Object.assign({},this.state.message)
+                  messages.industryId = PropsUpStream.industryId
+                  this.state.message.industryId = PropsUpStream.industryId
+                  messages.region = PropsUpStream.region
+                  if(PropsUpStream.type){
+                      messages.type = PropsUpStream.type
+                  }
+                 this.fetch(JSON.stringify(messages))
+              }
+               return this.handleLoading()
+
+           }
 
            if(this.state.responseEmpty && this.state.isIndential){ //isIndential:当选择的条件变化值为true,下拉刷新的时候值为 false
               return  this.handleResponseEmpty()

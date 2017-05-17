@@ -26,7 +26,8 @@ export default class FindOrganize extends Component {
             start: true,
             handleSearchEmpty: false,
             updateInput: false,
-            clearecord: true,
+            clearecord: false,
+            AlearyClear:true,
             searchEmptyClear: true,
             conditionRealse: false,
             selectIndustry: '',
@@ -34,6 +35,10 @@ export default class FindOrganize extends Component {
             responseSussess: false,
             onkeyUpkeyword: '',
             onkeyUpRealse: false,
+            searchPrompt:'', // 点击搜索提示请填写的搜索内容隐藏,display:'none' 不占位置
+            opacity:0,
+            display:'none',
+            intervalObj:{},
             messages: {
                 keyword: '',
                 industryId: '',
@@ -46,11 +51,21 @@ export default class FindOrganize extends Component {
     }
 
     componentWillMount() {
+
+        if(localStorage.getItem('userHistory') != null ){
+            var juggleHistory = JSON.parse(localStorage.getItem('userHistory')).length
+            if(juggleHistory >0){
+                this.setState({clearecord:true})
+            }
+        }else {
+            this.setState({clearecord:false})
+        }
         document.title = '搜索'
        localStorage.removeItem('userInputLocal') // 这是在h5键盘,发送请求的开始
         localStorage.removeItem('handleKeyResult')
         let strIndustry = this.props.params.instryName
-        if(strIndustry){
+
+        if(typeof strIndustry == 'string' ){  // 一个没有的必要的请求的，只是为了andriod 显示返回按钮
             let strindex = strIndustry.indexOf('user')
             if (strindex != -1) {
                 let IndustryuserId = JSON.parse(this.props.params.instryName)
@@ -77,6 +92,24 @@ export default class FindOrganize extends Component {
     }
 
     componentDidMount() { // 取用户输入的最后的那个值 每次返回都会执行这里
+
+        if(localStorage.getItem('userHistory') != null){
+            var juggleHistory = JSON.parse(localStorage.getItem('userHistory'));
+            var history = [];
+            for(var i=0 ; i< juggleHistory.length;i++){
+                var flag = true
+                for(var j = 0; j<history.length; j++){
+                    if(juggleHistory.keyword == history.keyword ){
+                        flag = false
+                    }
+                }
+                if(flag){
+                    history.push(juggleHistory[i])
+                }
+            }
+
+        }
+
         const _this = this
         if (this.props.params.instryName == undefined) { // 直接点击上面的返回按钮，没有传递 params
             return
@@ -98,7 +131,6 @@ export default class FindOrganize extends Component {
             releaseControlObj.release = 'false'
             localStorage.setItem('releaseLocal', JSON.stringify(releaseControlObj))
         }
-
         let handleHistoryMasks = JSON.parse(localStorage.getItem('handleHistoryRecord'))
         if (handleHistoryMasks != null && handleHistoryMasks.history == 'true') {
             let handleHistoryMaskschange = JSON.parse(localStorage.getItem('handleHistoryRecord'))
@@ -246,7 +278,7 @@ export default class FindOrganize extends Component {
 
         this.setState({useHistory: !this.state.useHistory})
         localStorage.removeItem('userHistory')
-        this.setState({clearecord: false})
+        this.setState({AlearyClear:false,clearecord:false})
     }
 
 
@@ -368,7 +400,6 @@ export default class FindOrganize extends Component {
     }
     handleHistory = (value, index)=> { // 历史记录处理
 
-
         var arrList = JSON.parse(localStorage.getItem('userHistory')).length - 1
         if (Boolean(value.keyword) && !Boolean(value.region) && Boolean(value.industryName) == false) { //当用户第一次输入行业类型没有选
 
@@ -481,12 +512,27 @@ export default class FindOrganize extends Component {
         var newindustryName = this.state.industryName
 
         if (newkeyword == '' && newindustryName == '' && newregion == '') {
-            this.setState({handleSearchEmpty: true})
+            this.setState({handleSearchEmpty: !this.state.handleSearchEmpty})
+            console.log(document.documentElement.clientHeight)
+            if(!this.state.handleSearchEmpty){
+
+                 if(localStorage.getItem('localtime')){
+                     let time = JSON.parse(localStorage.getItem('localtime')).time
+                     window.clearTimeout(time)
+                 }
+              var localtime = JSON.parse(localStorage.getItem('localtime')) || new Object()
+                  localtime.time = window.setTimeout(()=>{this.setState({handleSearchEmpty:false})},2000)
+                localStorage.setItem('localtime',JSON.stringify(localtime))
+            }else {
+
+                    let time = JSON.parse(localStorage.getItem('localtime')).time
+                window.clearTimeout(time)
+            }
             return
         }
 
         this.setState({handleSearchEmpty: false})
-        this.setState({clearecord: true})
+        this.setState({AlearyClear:true})
         var newMessages = Object.assign({}, this.state.messages)
         newMessages.keyword = newkeyword
         if (Boolean(newindustryId) == true) {
@@ -498,7 +544,7 @@ export default class FindOrganize extends Component {
         let strMessage = JSON.stringify(newMessages)
 
         let userHistory = localStorage.getItem('userHistory')
-        var arr = JSON.parse(userHistory || '[]')
+        var arr = JSON.parse(userHistory ) || []
         arr.map((value, index)=> {
             if (value.keyword == newkeyword && value.industryName == newindustryName && value.region == newregion) {
                 arr.splice(index, 1)
@@ -556,7 +602,7 @@ export default class FindOrganize extends Component {
         let finalResult = IndustryRealse || regoinRealse //行业地区任意对应一个就好
 
         if (keyUpWord == null && finalResult) { //没有选择关键字，行业和地区中任意对应一个
-             console.log(strMessage)
+
             var keyUpWordsure = true  // 当没有设置关键字的时候 任意选择行业地区的中的一个都可以跳转 keyUpWordsure 释放跳转的标记
         }
         if (keyUpWord != null) {//
@@ -591,31 +637,36 @@ export default class FindOrganize extends Component {
         localStorage.removeItem('handleKeyResult')
 
         let strIndustry = this.props.params.instryName
-        let strindex = strIndustry.indexOf('user')
-        if (strindex != -1) {
-            let IndustryuserId = JSON.parse(this.props.params.instryName)
-            if (IndustryuserId.userId) {
-                var userObj = new Object()
-                userObj.userId = parseInt(IndustryuserId.userId)
-                var userId = JSON.stringify(userObj)
+        if(typeof strIndustry == 'string' ){
+            let strindex = strIndustry.indexOf('user')
+            if (strindex != -1) {
+                let IndustryuserId = JSON.parse(this.props.params.instryName)
+                if (IndustryuserId.userId) {
+                    var userObj = new Object()
+                    userObj.userId = parseInt(IndustryuserId.userId)
+                    var userId = JSON.stringify(userObj)
+                }
             }
         }
-
         browserHistory.push(`/`)
     }
 
     handleStart = ()=> {
         return (
             <div className='lookOrgan'>
-                <form onSubmit={this.handleKeyup}>
-                    <div className='top_Serach'>
-                        <div className='searchChange'>
-                            <span></span>
-                            <input autoFocus ref='keyword' type="search" placeholder='请输入组织名称'
-                                   value={this.state.keyword} onChange={this.handleInput}/>
+                <form onSubmit={this.handleKeyup} action='javascript:return true;'>
+
+                    <div className='top_SerachDetail'>
+                        <div>
+                            <div className='SearchDetailContiner'>
+                                <span></span>
+                                <input autoFocus ref='keyword' type="search" placeholder='请输入组织名称'
+                                       value={this.state.keyword} onChange={this.handleInput}/>
+                            </div>
+                            <span onClick={this.handleHeighLevel}>取消</span>
                         </div>
-                        <span onClick={this.handleHeighLevel}>取消</span>
                     </div>
+
                     <div className='select'>
                         <div className='industry' onClick={this.handleIndustry}>
                             <span > 行业类型 </span> <b>{this.state.industryName}</b> <span ></span>
@@ -634,8 +685,8 @@ export default class FindOrganize extends Component {
                         }
                     </div>
                     <div className={this.state.clearecord?'empty':'emptyNone'} onClick={this.handleEmpty}>清空搜索记录</div>
-                    <div className={this.state.handleSearchEmpty?'handleSearchEmpty':'handleSearchnone'}>请填写搜索条件</div>
-                    <div className={this.state.clearecord?'changNone':'changeTrans'}>已清除</div>
+                    <div ref = 'searchEmpty' className={this.state.handleSearchEmpty?'handleSearchEmpty':'handleSearchnone'} >请填写搜索条件</div>
+                    <div className={this.state.AlearyClear?'changNone':'changeTrans'}>已清除</div>
                 </div>
             </div>
         )

@@ -9,14 +9,15 @@ import React, { Component } from 'react'
 import service from '../services/movieService.js'
 import './css/AboutDetailIndustary.css'
 import {browserHistory } from 'react-router'
+
 class AboutDetailIndustary extends Component {
     constructor(props) {
         super(props)
         this.state={
-            isLoading:true,
             datamessage:{},
             detailData:[],
             startWord:'',
+            isLoading:false,  // 提示正在加载的图片
             dataEmpty:false,
             messages:{
                 keyword: '',
@@ -24,17 +25,21 @@ class AboutDetailIndustary extends Component {
         }
     }
 
+
     componentDidUpdate(){ //不断的监测检测state 和 props 变化
 
         if(this.props.item != this.state.startWord){ //先判断在赋值，当前的和之前的比较
-            this.setState({startWord:this.props.item })
+            this.setState({startWord:this.props.item,isLoading:true }) // isLoading :搜索条件改变,加载图片在次显示提示
             this.fetch(this.props.item)
 
         }
     }
 
     fetch = (messages) => {
-
+        if(messages == ''){
+            this.setState({isLoading:false,dataEmpty:false })
+            return
+        }
         var _this = this // 保存全局 this
         let strMessage = Object.assign({},this.state.messages)
         strMessage.keyword = messages
@@ -42,20 +47,20 @@ class AboutDetailIndustary extends Component {
         let detailData = [].concat(this.state.detailData)
         const promise = service.getIndustrayDetail(finalMessage)
         promise.then((json) => { // 获取到数据遮罩去掉
+
             if(json ==''){
                 this.setState({dataEmpty:true,isLoading:false})
                 return
             }
             json = JSON.parse(json) || RecomData
-            if (detailData.length > 0) {
-                detailData = detailData.concat(json.industryList)
-            } else {
+
                 detailData = json.industryList
-            }
+
             // 获取到数据之后 去掉遮罩 ，加载数据提示去掉
             _this.setState({ // 同步还是异步
-                isLoading: false,
+                dataEmpty:false, // 当有的数据的时候,提示没有数据要收起
                 detailData: detailData,
+                isLoading:false
             })
         }),reason =>{
             console.log(reason)
@@ -64,6 +69,11 @@ class AboutDetailIndustary extends Component {
     handleRender =()=>{
         return (
             <div className='loadDataAbout'>请输入行业类型</div>
+        )
+    }
+    handleLoading =()=>{
+        return (
+            <div className='isLoading'><img src="../../images/isLoading.png" alt=""/></div>
         )
     }
     handleOrign =()=>{
@@ -78,6 +88,7 @@ class AboutDetailIndustary extends Component {
         )
     }
     handleDetailRegion = (industryId,industryName,bind)=>{
+
          browserHistory.push(`/container/find/${industryId}+${industryName}+1`)
     }
     // 渲染数据方法中
@@ -90,7 +101,7 @@ class AboutDetailIndustary extends Component {
         )
     }
     handleRecomContent =()=>{
-
+　　　　　　　　　
         return (
            <div className='aboutDetailContainer' >
                <div className = 'findeResult' ref="scroll_container">
@@ -99,10 +110,34 @@ class AboutDetailIndustary extends Component {
            </div>
         )
     }
-    render() { // isloading ：数据没有获取到之前 显示数据加载，
-        if(this.state.isLoading){
-            return this.handleRender()
+    handleClickRefresh =()=>{
+            console.log(this.props.item)
+            this.setState({startWord:this.props.item,isLoading:true}) // isLoading :搜索条件改变,加载图片在次显示提示
+           if(this.props.item == ''){
+                this.setState({isLoading:false,dataEmpty:false})
+           }else {
+               this.fetch(this.props.item)
+           }
+
+
+    }
+    handleInternet =()=>{
+        return<div className='internet' onClick={this.handleClickRefresh} style={{position:'fixed'}}>
+            <div className='internetImage'>
+                <img src={require('../images/internet.png')} alt="网络断开链接请检查网络设置" title='网络断开链接请检查网络设置'/>
+                <span>网络异常,请检查网络设置</span>
+            </div>
+        </div>
+    }
+    render() {
+
+        if(!window.navigator.onLine){
+            return this.handleInternet()
         }
+         if(this.state.isLoading){
+            return  this.handleLoading()
+
+         }
        if(this.state.dataEmpty){
                return this.handleOrign()
         }

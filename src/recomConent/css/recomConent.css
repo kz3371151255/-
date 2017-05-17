@@ -16,7 +16,6 @@
 .RecomComponent .componentImage{
     width: 3.33rem;
     height: 3.33rem;
-    background: url("../../images/originImage.png") no-repeat center center;
     background-size: 3.33rem 3.33rem;
     margin-left: 1rem;
     margin-top: 1rem;
@@ -56,7 +55,15 @@
     bottom: 0rem;
     width:30.25rem;
     margin-left:1rem;
-    border: 1px solid #D8D8D8 ;
+    height: 1px;
+    background-color:#e1e1e1 ;
+}
+.RecomComponent .classBorderAll {
+    position: absolute;
+    bottom: 0rem;
+    width:100%;
+    height: 1px;
+    background-color:#e1e1e1 ;
 }
 
 .noneOrginRecom{

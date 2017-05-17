@@ -69,7 +69,7 @@ export default class AboutContainer extends Component {
     handleUserMasker =()=>{ //遮罩问题
         return (
             <div>
-                <form onSubmit={this.handleSubmit} >
+                <form onSubmit={this.handleSubmit} action='javascript:return true;'>
                     <div className='top_SerachDetail'>
                         <div>
                            <div className='SearchDetailContiner'>
@@ -100,12 +100,16 @@ export default class AboutContainer extends Component {
         }
         return (
             <div className='industryContainer'>
-                <div className='findSearch'>
-                    <div className='findbox'>
-                        <span></span> <input  onFocus ={this.handleFocus} ref='industrySearch' type="search" placeholder='请输入行业的类型' />
+                <div className='top_SerachDetail'>
+                    <div>
+                        <div className='SearchDetailContiner'>
+                            <span></span>
+                            <input  onFocus ={this.handleFocus} ref='industrySearch' type="search" placeholder='请输入行业的类型' />
+                        </div>
+                        <span onClick={this.handleJumpUp}>取消</span>
                     </div>
-                    <span onClick={this.handleJumpUp}>取消</span>
                 </div>
+
                 <div className='containerIndustry'>
                     {
                         Industry.map((value, index)=> {
@@ -113,7 +117,8 @@ export default class AboutContainer extends Component {
                                 key={index}
                                 icon={true}
                                 index={index}
-                                content={ <p style={{height:'4rem',lineHeight:'4rem',paddingLeft:'2.42rem',backgroundColor:'#FFFFFF',fontSize:'1.33rem',overflow: 'hidden', display:'block', whiteSpace:'nowrap', textOverflow:'ellipsis',borderBottom:this.state.currentBorder}}>{value.instryName}</p>}
+                                content={ <p style={{height:'4rem',lineHeight:'4rem',paddingLeft:'2.42rem',
+backgroundColor:'#FFFFFF',fontSize:'1.33rem',overflow: 'hidden', display:'block', whiteSpace:'nowrap', textOverflow:'ellipsis',borderBottom:this.state.currentBorder}}>{value.instryName}</p>}
                                 iconStyle={{position:'absolute',left:'1rem'}}
                                 expandedIcon={<img src={require('../images/rotateUp.png')} style={{position:'absolute'}} /> }
                                 noexpandedIcon={<img src={require('../images/right.png')} style={{position:'absolute'}} />}
@@ -130,7 +135,7 @@ export default class AboutContainer extends Component {
                                 }}
                                 >
                                 {
-                                    value.industryList.map((val, index)=> {
+                                    value.industryList && value.industryList.length > 0  && value.industryList.map((val, index)=> {
                                         return <Card
                                             key={index}
                                             icon={true}
@@ -155,7 +160,7 @@ export default class AboutContainer extends Component {
                                             contentStyle={styles.provinceTwoLevel}
                                             >
                                             {
-                                                val.industryList.map((vv, ii)=> {
+                                                val.industryList && val.industryList.length>0  && val.industryList.map((vv, ii)=> {
                                                     return <Card
                                                         key={ii}
                                                         icon={true}
@@ -181,13 +186,13 @@ export default class AboutContainer extends Component {
                                                         contentStyle={{paddingLeft:'rem',boxSizing:'border-box',backgroundColor:'#F5F5F5 ',borderBottom:'1px solid #E1E1E1'}}
                                                         >
                                                         {
-                                                            vv.industryList && vv.industryList.map((v, i)=> {
+                                                            vv.industryList &&  vv.industryList.length >0 && vv.industryList.map((v, i)=> {
 
                                                                 return <Card
                                                                     key={i}
                                                                     icon={true}
                                                                     index={i}
-                                                                    content={ <p key={i}style={{height:'4rem',lineHeight:'4rem',borderBottom:'1px solid #E1E1E1',textIndent:'3rem',fontSize:'1.33rem',color:'#666666',overflow: 'hidden', display:'block', whiteSpace:'nowrap', textOverflow:'ellipsis'}}>
+                                                                    content={ <p key={i}style={{height:'4rem',lineHeight:'4rem',borderBottom:'1px solid #E1E1E1',textIndent:'5.5rem',fontSize:'1.33rem',color:'#666666',overflow: 'hidden', display:'block', whiteSpace:'nowrap', textOverflow:'ellipsis'}}>
                                                        {v.instryName}
                                                     </p>}
                                                     handleIndutiyClick = {(index,toggle)=>{

@@ -64,9 +64,18 @@
     position: absolute;
     bottom: 0px;
     width: 30.25rem;
-    border: 1px solid #D8D8D8 ;
+    height: 1px ;
+    background-color: #e1e1e1;
+    margin-left: 1rem;
 }
 
+.findComponent .classBorderall {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    height: 1px ;
+    background-color: #e1e1e1;
+}
 /*暂无搜索结果*/
 
 

@@ -23,7 +23,8 @@
     bottom: 0rem;
     width: 30.25rem;
     margin-left:1rem;
-    border: 1px solid #E1E1E1;
+    height: 1px;
+    background-color: #e1e1e1;
 }
 
 .noneOrgin{
@@ -65,3 +66,5 @@ input[type=search]::-webkit-search-cancel-button{
     background-size: 15px 15px;
 
 }
+
+
