@@ -19,6 +19,7 @@ export default class UpstreamDetaildata extends Component {
                 propsType:'',
                 baginOrgIdRelease:2,
                 detaiLength:'',
+                waitFlag:'none',
                 message:{
                     type:'',
                     count:20,
@@ -38,12 +39,10 @@ export default class UpstreamDetaildata extends Component {
         if(nextProps.upStreamArr.type == 0 ){ // 只有在选择对应上游的时候type=0
             this.state.message.type = nextProps.upStreamArr.type
         }
-
         this.setState({propsType:nextProps.upStreamArr.type})
 
         if(nextProps.upStreamArr != this.props.upStreamArr) {//监测前后props属性有没有改变
                 //beginOrgId 是用来做下拉刷新,设置数据显示开始的位置,由于一个数据刷新完成以后，会给state lastorgId 设置上即，会保留，这样会设在下一个条件上,当更换条件的时候beginOrgId,应该的从头开始加载数据 (baginOrgIdRelease)
-
             // 当前props属性值发生改变释放    isIndential = true
             let PropsUpStream = nextProps.upStreamArr
             this.setState({industryName:PropsUpStream.industryName,industryId:PropsUpStream.industryId,isIndential:true,baginOrgIdRelease:++this.state.baginOrgIdRelease,isLoading:true})
@@ -56,8 +55,8 @@ export default class UpstreamDetaildata extends Component {
             messages.region = PropsUpStream.region
             if(PropsUpStream.type){
                 messages.type = PropsUpStream.type
+                this.state.message.type = PropsUpStream.type
             }
-
             this.fetch(JSON.stringify(messages))
         }
 
@@ -83,7 +82,8 @@ export default class UpstreamDetaildata extends Component {
                     return
                 }
 
-                _this.setState({isButton:true,baginOrgIdRelease:1,isIndential:false}) //当下拉刷新的时候，表示是在当前条件,所以还是的需要的beginOrgId
+                _this.setState({isButton:true,baginOrgIdRelease:1,isIndential:false,waitFlag:'block'}) //当下拉刷新的时候，表示是在当前条件,所以还是的需要的beginOrgId
+                        this.state.message.type  = this.props.upStreamArr.type
                 _this.fetch(this.state.message,this.state.lastOrgId)
             }
         })
@@ -105,17 +105,22 @@ export default class UpstreamDetaildata extends Component {
         let messageStr = JSON.stringify(messageObj)
         let promise = service.getSearchResult(messageStr)
         promise.then((json)=>{
+            if(this.state.isIndential){//表示请求不同的数据 lastOrgid :应该从新的开始
+               this.setState({lastOrgId:''})
+            }
+
             if(json =='' && this.state.lastOrgId  == ''){
-                this.setState({responseEmpty:true,isLoading:false})
+                this.setState({responseEmpty:true,isLoading:false,waitFlag:'none'})
                 return
             }
             if(json == ''){
-                this.setState({responseArr:responseArr,isLoading:false,responseEmpty:false,detaiLength:responseArr.length-1,isButton:false })
+                this.setState({responseArr:responseArr,isLoading:false,responseEmpty:false,detaiLength:responseArr.length-1,isButton:false,waitFlag:'none' })
+
             }else {
                 json = JSON.parse(json)
-                this.setState({isButton:false})
+                this.setState({isButton:false,waitFlag:'none'})
 
-                if(this.state.isIndential){//isIndential值为true,表示请求不同的数据
+                if(this.state.isIndential){//isIndential值为true,表示请求不同的数据,在下拉刷新的时候的就会进行的关闭
                     responseArr = []
                 }
                 if(responseArr.length>0){ // 数据刷新时执行
@@ -172,7 +177,7 @@ export default class UpstreamDetaildata extends Component {
     }
     handleLoading =()=>{
         return (
-            <div className='isLoading'><img src="../../images/isLoading.png" alt=""/></div>
+            <div className='isLoadingStream'><img src={require("../../images/isLoading.png")} alt=""/></div>
         )
     }
     handleUpStreamDetail =(item,index)=>{ // 搜索组织详细展示
@@ -196,7 +201,9 @@ export default class UpstreamDetaildata extends Component {
     handleUpstream =()=>{
 
           return (
-              <div className='upStreamDetailContainer' ref='scroll_container'>{ this.state.responseArr.map(this.handleUpStreamDetail)}</div>
+              <div className='upStreamDetailContainer' ref='scroll_container'>{ this.state.responseArr.map(this.handleUpStreamDetail)}
+                  <div className='isLoadingwaitFlage' style={{display:this.state.waitFlag}}><img src={require("../../images/isLoading.png")} alt=""/></div>
+              </div>
           )
     }
 

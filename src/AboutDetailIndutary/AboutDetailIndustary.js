@@ -24,7 +24,11 @@ class AboutDetailIndustary extends Component {
             }
         }
     }
+   componentWillMount(){
+           window.handleGoBackHome =()=>{
 
+           }
+   }
 
     componentDidUpdate(){ //不断的监测检测state 和 props 变化
 
@@ -88,8 +92,10 @@ class AboutDetailIndustary extends Component {
         )
     }
     handleDetailRegion = (industryId,industryName,bind)=>{
-
-         browserHistory.push(`/container/find/${industryId}+${industryName}+1`)
+         var goback = JSON.parse(this.props.transmit)
+         var keyword = goback.keyword
+         var region = goback.region
+         browserHistory.push(`/container/find/${industryId}+${industryName}+${1}+${region}+${keyword}`)
     }
     // 渲染数据方法中
     handelRender =(item)=>{
@@ -104,7 +110,7 @@ class AboutDetailIndustary extends Component {
 　　　　　　　　　
         return (
            <div className='aboutDetailContainer' >
-               <div className = 'findeResult' ref="scroll_container">
+               <div className = 'region' ref="scroll_container">
                    {this.state.detailData.map(this.handelRender)}
                </div>
            </div>
@@ -130,10 +136,12 @@ class AboutDetailIndustary extends Component {
         </div>
     }
     render() {
-
-        if(!window.navigator.onLine){
+        console.log(this.props.item)
+        window.addEventListener('offline',()=>{
             return this.handleInternet()
-        }
+            
+        })
+
          if(this.state.isLoading){
             return  this.handleLoading()
 

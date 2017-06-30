@@ -40,7 +40,27 @@ module.exports = {
         loaders: [
             {
                 test: /\.jsx?$/,
-                loader: 'babel',
+                exclude:/node_modules/,
+                loader:['babel-loader'],
+                query: {
+                    plugins: [
+                        // 兼容 transform 引入的垫片
+                        ["transform-runtime", {
+                            "helpers": false,
+                            "polyfill": true,
+                            "regenerator": true
+                        }],
+                        'add-module-exports',
+                        'transform-es3-member-expression-literals',
+                        'transform-es3-property-literals',
+                    ],
+                    // 也是解决兼容问题
+                    presets: [
+                        'react',
+                        'es2015',
+                        'stage-0'
+                    ]
+                }
             },
 
             {
@@ -55,6 +75,7 @@ module.exports = {
                 test: /\.(eot|woff|ttf|woff2|svg)$/,
                 loader: 'url'
             },
+
             { test: /\.css$/, loader : ExtractTextPlugin.extract('style-loader','css-loader!postcss-loader') }
 
         ]

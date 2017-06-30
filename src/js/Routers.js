@@ -5,6 +5,7 @@ import React, { Component } from 'react'
 import { Router, Route,IndexRoute,Redirect, Link,hashHistory,browserHistory} from 'react-router'
 
 import Enter from './enter.js'
+import {rem} from '../js/rem.js'
 import AppContainer from '../AppContainer/AppContainer.js'
 import HomeContainer from '../HomeContainer/HomeContainer.js'
 import MovieContainer from '../MovieContainer/MovieContainer.js'

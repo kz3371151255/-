@@ -26,7 +26,7 @@ class BaseModal extends React.Component {
         </div>
       );
       // 当关闭modal时，不要忘记设置 css = '';
-      const css = 'overflow:hidden; position:fixed; left:0; top:0; bottom:0;';
+      const css = 'overflow:hidden; position:absolute; left:0; bottom:0;';
       document.body.style.cssText = css;
     }
     return (

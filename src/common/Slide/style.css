@@ -10,7 +10,7 @@
 .slide-ul {
 	width: 1000%;
 	height: 100%;
-	position: relative;
+	position: absolute;
 	overflow: hidden;
 	height: 5.25rem;
 }

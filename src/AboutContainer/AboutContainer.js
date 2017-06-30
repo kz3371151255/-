@@ -7,17 +7,11 @@ import { Card } from '../common/levelMenu/levelMenu.jsx'
 import './container.css'
 import {Industry} from'../data/industry.js'
 import AboutDetailIndustary from'../AboutDetailIndutary/AboutDetailIndustary.js'
-
+import {rem} from'../js/rem.js'
 var uuu = navigator.userAgent;
 var isIos=!!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)==true;
-if(isIos){
-    window.webkit && window.webkit.messageHandlers.getIndustryList.postMessage(null);
-    window.IndustryList = 111;
-    window.handleFromIosData = function(getIndustryData){
-        IndustryList = getIndustryData || '没有获取到数 据'
-        return IndustryList
-    }
-}
+var isAndroid=uuu.indexOf('Android') > -1 || uuu.indexOf('Linux') > -1;
+
 export default class AboutContainer extends Component {
     constructor(props) {
         super(props)
@@ -29,66 +23,112 @@ export default class AboutContainer extends Component {
             Cumulative:1,
             handlePrompt:false,
             currentBorder:'none',
-            childrenBorder:'1px solid #e1e1e1'
+            childrenBorder:'1px solid #e1e1e1',
+            cancleButton:'none',
+            childHeight:'4rem',
         }
     }
     componentWillMount (){
         document.title = '选择行业类型'
-        this.setState({local:this.getLianData.bind(this)()})
-    }
-    getLianData =()=>{// 拦截 android 和 ios 的 数据
-        var uuu = navigator.userAgent;
-        var isAndroid=uuu.indexOf('Android') > -1 || uuu.indexOf('Linux') > -1;
-        var isIos=!!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)==true;
+       window.handleGoBackHome =()=>{
+           this.handleGoBackHome()
+
+       }
         if(isIos) {
-           return window.IndustryList
+            window.handleFromIosData = (industryData)=>{
+                this.setState({local:industryData})
+            }
+            window.webkit && window.webkit.messageHandlers.getIndustryList.postMessage(null);
+
         }else if(isAndroid){
-            return   window.androidJsInterface && window.androidJsInterface.getIndustry()
+            return   window.androidJsInterface && this.setState({local:window.androidJsInterface.getIndustry()})
         }
     }
+    componentDidMount(){
+        document.documentElement.style.fontSize = innerWidth /31.25 +'px';
+        window.onresize = function(){
+            document.documentElement.style.fontSize = innerWidth /31.25 +'px';
+        }
+        this.refs.containerIndustry.addEventListener('touchstart',()=>{
+                  this.setState({childHeight:'4.1rem'})
+
+        })
+    }
+    componentDidUpdate(){
+            window.handleGoBackHome =()=>{
+                if(this.state.userfocus){ //获取焦点返回列表页面
+                    this.handleAboutIndustry()
+                }else{ // 没有返回搜索页面
+                    this.handleGoBackHome()
+                }
+            }
+   }
     handleFocus = ()=>{//获取焦点的时候，弹出遮罩
-        this.setState({userfocus:true})
+        this.setState({userfocus:true,keyword:''})
+    }
+    handleAboutIndustry =() =>{
+        this.setState({userfocus:false,keyword:''})
     }
     handlecancleMasks =()=>{
-        this.setState({userfocus:false})
+        this.setState({userfocus:false,keyword:''})
     }
     handleInputAbout =(e)=>{
         this.setState({keyword:e.target.value})
+        if(e.target.value !=''){
+            this.setState({cancleButton:'block'})
+        }else {
+            this.setState({cancleButton:'none'})
+        }
     }
     handleSubmit =(event)=>{
         event.preventDefault()
         window.addEventListener('keyup',(e)=>{
             if(e.keyCode ==13 ){
-
+                  if(!this.state.keyword){
+                      return
+                  }
                 if(this.state.submit != this.state.keyword){// 先赋值在改变，比较old 和 new
                     this.setState({submit:this.state.keyword})
                 }
+
             }
         })
     }
+    handlecancleButton =()=>{
+        this.setState({keyword:'',cancleButton:'none'})
+    }
     handleUserMasker =()=>{ //遮罩问题
         return (
-            <div>
+            <div style={{overflow:'hidden'}}>
+
                 <form onSubmit={this.handleSubmit} action='javascript:return true;'>
                     <div className='top_SerachDetail'>
                         <div>
                            <div className='SearchDetailContiner'>
                                <span></span>
                                <input autoFocus ref='keyword' type="search" placeholder='请输入行业类型' value={this.state.keyword}
-                                      onChange={this.handleInputAbout} />
+                                      onChange={this.handleInputAbout}  />
+                               <b onClick={this.handlecancleButton} style={{display:this.state.cancleButton}}></b>
                            </div>
-                            <span onClick={this.handlecancleMasks}>取消</span>
+
                         </div>
                     </div>
                 </form>
                 <div>
-                    <AboutDetailIndustary item={this.state.submit}/>
+                    <AboutDetailIndustary item={this.state.submit} transmit={this.props.params.region}/>
                 </div>
             </div>
         )
     }
-    handleJumpUp = () =>{
-        browserHistory.push(`/container/find`)
+    handleGoBackHome  = () =>{ // 点击返回按钮将已经选中的结果进行回传设置
+
+        var goBacK = JSON.parse(this.props.params.region)
+        var keyword = goBacK.keyword
+        var industryName = goBacK.industryName
+        var industryId = goBacK.industryId
+        var region = goBacK.region
+
+        browserHistory.push(`/container/find/${industryId}+${industryName}+${1}+${region}+${keyword}`)
     }
     handleuserIndustry = ()=>{
         const styles = {
@@ -98,25 +138,27 @@ export default class AboutContainer extends Component {
             pHeightTwolevel:{width:'86%',height:'4rem',lineHeight:'4rem',textIndent:'4rem',fontSize:'1.33rem',overflow: 'hidden', display:'block', whiteSpace:'nowrap', textOverflow:'ellipsis',borderBottom:this.state.currentBorder},
 
         }
+
         return (
             <div className='industryContainer'>
+
                 <div className='top_SerachDetail'>
                     <div>
                         <div className='SearchDetailContiner'>
                             <span></span>
-                            <input  onFocus ={this.handleFocus} ref='industrySearch' type="search" placeholder='请输入行业的类型' />
+                            <input  onFocus ={this.handleFocus} ref='industrySearch' type="search" placeholder='请输入行业类型' />
                         </div>
-                        <span onClick={this.handleJumpUp}>取消</span>
                     </div>
                 </div>
 
-                <div className='containerIndustry'>
+                <div className='containerIndustry' ref = 'containerIndustry'>
                     {
-                        Industry.map((value, index)=> {
+                        this.state.local && JSON.parse(this.state.local).map((value, index)=> {
                             return <Card
                                 key={index}
                                 icon={true}
                                 index={index}
+                                childHeight={this.state.childHeight}
                                 content={ <p style={{height:'4rem',lineHeight:'4rem',paddingLeft:'2.42rem',
 backgroundColor:'#FFFFFF',fontSize:'1.33rem',overflow: 'hidden', display:'block', whiteSpace:'nowrap', textOverflow:'ellipsis',borderBottom:this.state.currentBorder}}>{value.instryName}</p>}
                                 iconStyle={{position:'absolute',left:'1rem'}}
@@ -149,7 +191,7 @@ backgroundColor:'#FFFFFF',fontSize:'1.33rem',overflow: 'hidden', display:'block
                                                          this.setState({currentBorder:'none'})
                                                 }
                                                       let Number = 1 ;
-                                                      let region = JSON.parse(this.props.params.region).selectRegion
+                                                      let region = JSON.parse(this.props.params.region).region
                                                       let keyword = JSON.parse(this.props.params.region).keyword
 
                                                     browserHistory.push(`/container/find/${val.industryId}+${val.instryName}+${Number}+${region}+${keyword}`)
@@ -166,7 +208,7 @@ backgroundColor:'#FFFFFF',fontSize:'1.33rem',overflow: 'hidden', display:'block
                                                         icon={true}
                                                         index={ii}
                                                         content={<p   style={styles.pHeightTwolevel}>{vv.instryName}</p>}
-                                                             handleIndutiyClick = {(index,toggle)=>{
+                                                        handleIndutiyClick = {(index,toggle)=>{
 
                                                        if(index == ii){  //通过方法,将当前索引进行回传,当点击当前的索引,显示边框
                                                               this.setState({currentBorder:'1px solid #e1e1e1'})
@@ -175,7 +217,7 @@ backgroundColor:'#FFFFFF',fontSize:'1.33rem',overflow: 'hidden', display:'block
                                                         }
 
                                                       let Number = 1 ;
-                                                      let region = JSON.parse(this.props.params.region).selectRegion
+                                                      let region = JSON.parse(this.props.params.region).region
                                                       let keyword = JSON.parse(this.props.params.region).keyword
 
                                                     browserHistory.push(`/container/find/${vv.industryId}+${vv.instryName}+${Number}+${region}+${keyword}`)
@@ -195,14 +237,14 @@ backgroundColor:'#FFFFFF',fontSize:'1.33rem',overflow: 'hidden', display:'block
                                                                     content={ <p key={i}style={{height:'4rem',lineHeight:'4rem',borderBottom:'1px solid #E1E1E1',textIndent:'5.5rem',fontSize:'1.33rem',color:'#666666',overflow: 'hidden', display:'block', whiteSpace:'nowrap', textOverflow:'ellipsis'}}>
                                                        {v.instryName}
                                                     </p>}
-                                                    handleIndutiyClick = {(index,toggle)=>{
+                                                                    handleIndutiyClick = {(index,toggle)=>{
 
                                                         if(index == i){
                                                                   this.setState({currentBorder:'1px solid #e1e1e1'})
                                                            }else if(toggle) {
                                                                  this.setState({currentBorder:'none'})
                                                         }
-                                                         let region = JSON.parse(this.props.params.region).selectRegion
+                                                         let region = JSON.parse(this.props.params.region).region
                                                          let keyword = JSON.parse(this.props.params.region).keyword
                                          let Number = 1
                                                 browserHistory.push(`/container/find/${v.industryId}+${v.instryName}+${Number}+${region}+${keyword}`)
@@ -241,3 +283,51 @@ backgroundColor:'#FFFFFF',fontSize:'1.33rem',overflow: 'hidden', display:'block
     }
 }
 
+/*
+import React,{ Component} from 'react'
+import {browserHistory } from 'react-router'
+import { Card } from '../common/levelMenu/levelMenu.jsx'
+import './container.css'
+import {Industry} from'../data/industry.js'
+import AboutDetailIndustary from'../AboutDetailIndutary/AboutDetailIndustary.js'
+var uuu = navigator.userAgent;
+var isIos=!!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)==true;
+var isAndroid=uuu.indexOf('Android') > -1 || uuu.indexOf('Linux') > -1;
+
+export default class AboutContainer extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            userfocus: false,
+            keyword: '',
+            submit: '',
+            local: '',
+            Cumulative: 1,
+            handlePrompt: false,
+            currentBorder: 'none',
+            childrenBorder: '1px solid #e1e1e1',
+            cancleButton: 'none',
+        }
+    }
+
+    render(){
+        return  (
+            <div style={{width:'80%',height:'300px',overflowY:'scroll',overflowX:'hidden',position:'absolute'}}>
+                 <ul>
+                    <li>11</li>
+                    <li>11</li>
+                    <li>11</li>
+                    <li>11</li>
+                    <li>11</li>
+                    <li>11</li>
+                    <li>11</li>
+                    <li>11</li>
+                    <li>11</li>
+                    <li>11</li>
+                 </ul>
+            </div>
+
+        )
+    }
+
+}*/

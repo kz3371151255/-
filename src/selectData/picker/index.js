@@ -3,7 +3,6 @@ import {browserHistory} from'react-router'
 import { PickerAddress } from '../components-ext';
 import '../components-ext/scss/index.scss';
 import './index.scss';
-
 export default class PickerDemo extends React.Component {
 
     constructor() {
@@ -19,11 +18,12 @@ export default class PickerDemo extends React.Component {
 
     }
     componentWillMount(){
+        window.handleGoBackHome = ()=>{
+            this.handleGoBackHome()
+        }
         document.title = '地区'
         this.setState({afterkeyWord:JSON.parse(this.props.params.industry).keyword})
-
     }
-
     // 地址选择
     showAddressPicker (e) {
         e.nativeEvent.stopImmediatePropagation();
@@ -47,7 +47,7 @@ export default class PickerDemo extends React.Component {
         let industry = JSON.parse(this.props.params.industry).selectIndustry
         let industryId = JSON.parse(this.props.params.industry).selectindustryId
         let keyword = this.state.afterkeyWord
-
+          console.log(JSON.parse(this.props.params.industry))
        browserHistory.push(`/container/find/${regionProvince}+${regionCity}+${regionArea}+${regionNumber}+${industry}+${industryId}+${keyword}`)
     }
 
@@ -57,10 +57,22 @@ export default class PickerDemo extends React.Component {
             addressPickerVisible: false,
         });
     }
+    handleGoBackHome = ()=>{
+        let regionProvince = JSON.parse(this.props.params.industry).region
+        let regionCity = '- -'
+        let regionArea = '- -'
+        let regionNumber = 2
+        let industry = JSON.parse(this.props.params.industry).selectIndustry
+        let industryId = JSON.parse(this.props.params.industry).selectindustryId
+        let keyword =JSON.parse(this.props.params.industry).keyword
+
+        browserHistory.push(`/container/find/${regionProvince}+${regionCity}+${regionArea}+${regionNumber}+${industry}+${industryId}+${keyword}`)
+
+    }
 
     render() {
         return (
-
+         <div style={{overflow:'hidden'}}>
             <div className = "picker-demo">
                 <PickerAddress
                     defaultValue={this.state.address}
@@ -79,6 +91,7 @@ export default class PickerDemo extends React.Component {
                     </button>
                 </div>
             </div>
+        </div>
         )
     }
 }

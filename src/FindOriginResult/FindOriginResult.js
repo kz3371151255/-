@@ -4,12 +4,14 @@
 /**
  * Created by cvtt on 2017/3/20.
  */
-
+var uuu = navigator.userAgent;
+var isIos=!!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)==true;
+var isAndroid=uuu.indexOf('Android') > -1 || uuu.indexOf('Linux') > -1;
 import React, { Component } from 'react'
+import {browserHistory } from 'react-router'
 import './css/Find.css'
 import service from '../services/movieService.js'
 import {RecomData} from '../recomConent/data/recom.js'
-
 class RecomConent extends Component {
     constructor(props) {
         super(props)
@@ -20,6 +22,7 @@ class RecomConent extends Component {
             lastOrgId:'',
             response:false,
             detailLength:'',
+            waitFlag:'none',
             messages:{
                 keyword: '',
                 industryId: '',
@@ -31,7 +34,10 @@ class RecomConent extends Component {
         }
     }
     componentWillMount(){
-        document.title = '搜索结果'
+       document.title = '搜索结果'
+        window.handleGoBackHome =()=>{
+            this.handleGoBackHome()
+        }
 
     }
     componentDidMount(){
@@ -94,7 +100,7 @@ class RecomConent extends Component {
                 }
 
                 _this.fetch(this.state.messages,this.state.lastOrgId)
-                _this.setState({isButton:true})
+                _this.setState({isButton:true,waitFlag:'block'})
             }
         })
     }
@@ -109,7 +115,7 @@ class RecomConent extends Component {
         const promise = service.getSearchResult(strMessage)
         promise.then((json) => { // 获取到数据遮罩去掉
             if(json =='' && this.state.lastOrgId == ''){
-                this.setState({response:true,isLoading:false})
+                this.setState({response:true,isLoading:false,waitFlag:'none'})
                 return
             }
             if(json ==''){
@@ -118,12 +124,13 @@ class RecomConent extends Component {
                     detailData: detailData,
                     detailLength:detailData.length-1,
                     messages: message,
-                    isButton:false
+                    isButton:false,
+                    waitFlag:'none'
                 })
             }
             json = JSON.parse(json)
-            _this.setState({datamessage: json})
-            _this.setState({lastOrgId: json.lastOrgId})
+            _this.setState({datamessage: json,lastOrgId: json.lastOrgId,waitFlag:'none'})
+
             if (detailData.length > 0) {
                 detailData = detailData.concat(json.orgList)
             } else {
@@ -144,17 +151,19 @@ class RecomConent extends Component {
 
     handleOrign =()=>{
         return(
-            <div className='FindOriginnoneOrgin'>
-                <div className='FindOriginnoneOrginImage' ref="scroll_container">
-                    <img src={require('../images/empty.png')} alt=""/>
-                    <span>暂无搜索结果</span>
-                </div>
-            </div>
+           <div>
+                 <div className='FindOriginnoneOrgin'>
+                     <div className='FindOriginnoneOrginImage' ref="scroll_container">
+                         <img src={require('../images/empty.png')} alt=""/>
+                         <span>暂无搜索结果</span>
+                     </div>
+                 </div>
+           </div>
         )
     }
     handleLoading =()=>{
         return (
-            <div className='isLoading'><img src="../../images/isLoading.png" alt=""/></div>
+            <div className='isLoading'><img src={require("../images/isLoading.png")} alt=""/></div>
         )
     }
     handleClickRefresh =()=>{
@@ -187,12 +196,18 @@ class RecomConent extends Component {
             </div>
         )
     }
+    handleGoBackHome  = () =>{
+        browserHistory.push(`/container/find`)
+    }
     handleRecomContent =()=>{
 
         return (
+          <div>
             <div className = 'findeResult' ref="scroll_container">
                 {this.state.detailData.map(this.handelRender)}
+                <div className='isLoadingwaitFlage' style={{display:this.state.waitFlag}}><img src={require("../images/isLoading.png")} alt=""/></div>
             </div>
+        </div>
         )
     }
     render() { // isloading ：数据没有获取到之前 显示数据加载，

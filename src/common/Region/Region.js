@@ -3,7 +3,6 @@
  */
 import React ,{Component} from 'react'
 import './region.css'
-
  export  class Region extends Component {
         constructor(props){
             super(props)

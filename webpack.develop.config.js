@@ -4,9 +4,9 @@
 var path = require('path')
 var webpack   = require('webpack')
 var	HtmlWebpackPlugin   = require('html-webpack-plugin')
-var	autoprefixer      = require('autoprefixer')
-var	csswring          = require('csswring')
-var	ExtractTextPlugin = require('extract-text-webpack-plugin')
+var	autoprefixer      = require('autoprefixer') // 处理浏览器前缀
+var	csswring          = require('csswring') // css3 前缀
+var	ExtractTextPlugin = require('extract-text-webpack-plugin') //抽离css 样式
 
 module.exports = {
     entry : {
@@ -26,7 +26,7 @@ module.exports = {
         proxy: {
             '/lianzi/**': {  //https://lz.lianziapp.com/lianzi/discover/searchOrg
                 target: 'https://lz.lianziapp.com',
-              /*  target: 'http://192.168.1.204:8098',*/
+               /* target: 'http://192.168.1.204:8098',*/
                 secure: false,
                 changeOrigin: true
             }
@@ -42,6 +42,18 @@ module.exports = {
                 exclude:/node_modules/,
                 loader: 'babel',
                 query: {
+                    plugins: [
+                        // 兼容 transform 引入的垫片
+                        ["transform-runtime", {
+                            "helpers": false,
+                            "polyfill": true,
+                            "regenerator": true
+                        }],
+                        'add-module-exports',
+                        'transform-es3-member-expression-literals',
+                        'transform-es3-property-literals',
+                    ],
+                    // 也是解决兼容问题
                     presets: [
                         'react',
                         'es2015',

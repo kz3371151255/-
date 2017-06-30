@@ -8,18 +8,11 @@ import {browserHistory} from 'react-router'
 import UpstreamDetaildata from './UpstreamDetaildata/UpstreamDetaildata.js'
 import {Region} from '../common/Region/Region.js'
 import  {RegionData} from  '../data/region.js'
-
+import {pathParams} from '../js/config.js'
+import {rem} from'../js/rem.js'
 var uuu = navigator.userAgent;
 var isIos=!!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)==true;
-if(isIos){
-    window.webkit && window.webkit.messageHandlers.getAreaList.postMessage(null);
-    window.txt = 111;
-    window.handleAreaFromIosData  = function(getArea){
-        txt = getArea || '没有获取到数 据'
-        return txt
-    }
-}
-
+var isAndroid=uuu.indexOf('Android') > -1 || uuu.indexOf('Linux') > -1;
 export default class HomeContainer extends Component {
     constructor(props) {
         super(props)
@@ -80,30 +73,53 @@ export default class HomeContainer extends Component {
         }
     }
     componentWillMount(){ //加载要找首页获取userId,通过配置路由传递userId
+        window.handleGoBackHome = ()=>{
+            this.handleCloseWindow()
+        }
         let downObj = new Object()  // 页面初始的时候就要保证 类型
         downObj.type = 1
+        downObj.userId = this.props.location.query.userId
         this.setState({setIndustryArr:downObj})
-        let userProps = this.props.params.homeUser
-        this.setState({userId:userProps,regiondisplay:'none',local:this.getLianData.bind(this)()})
-        document.title = '找上游'
-        this.fetch(this.state.message)
-      /*  window.setInterval(internetStatus,500)*/
-    }
+       /* let userProps = this.props.params.homeUser*/
+        let userProps = this.props.location.query.userId
 
-    getLianData =()=>{// 拦截 android 和 ios 的 数据
+        this.setState({userId:userProps,regiondisplay:'none'})
+        document.title = '找上游'
+        if(isIos){
+            window.handleAreaFromIosData  = (areaData)=>{
+                this.setState({local:areaData})
+            }
+            window.webkit && window.webkit.messageHandlers.getAreaList.postMessage(null);
+        }else if(isAndroid) {
+             window.androidJsInterface && this.setState({local: window.androidJsInterface.getArea()})
+        }
+
+        this.fetch(this.state.message)
+    }
+    componentDidMount(){
+        if(!Boolean(this.props.params.homeUser)){//兼容android 4.4 版本以下,在android4.4以下进入上游的时候,按照比例缩小rem
+            rem()
+        }
+    }
+    handleCloseWindow =() =>{ // 返回要找主页
         var uuu = navigator.userAgent;
         var isAndroid=uuu.indexOf('Android') > -1 || uuu.indexOf('Linux') > -1;
         var isIos=!!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)==true;
-        if(isIos) {
-            return window.txt
-        }else if(isAndroid){
-            return   window.androidJsInterface &&  window.androidJsInterface.getArea()
+        if(isAndroid){
+            return window.androidJsInterface && window.androidJsInterface.closeWindow()
+        }else if(isIos){
+            browserHistory.push('/')
         }
     }
-
     fetch =(message,internetFlag)=>{// 首次进入页面请求数据
         let messageObj = Object.assign({},message)
+       /* let  locationuserId =  JSON.parse(localStorage.getItem('localUserId')).userId*/
+        let location  =  JSON.stringify(this.props.location.query)
         let  locationuserId =  JSON.parse(localStorage.getItem('localUserId')).userId
+        if(!JSON.parse(location).userId){
+            locationuserId = JSON.parse(this.props.params.homeUser).userId
+
+        }
         messageObj.userId = parseInt(locationuserId)
 
         let messageStr= JSON.stringify(messageObj)
@@ -139,7 +155,6 @@ export default class HomeContainer extends Component {
     }
 
     fetchUpstream =()=>{ //对应的上游行业请求
-
         let messageUpstream = Object.assign({},this.state.messages)
         if(messageUpstream.industryId != this.state.setIndustryId) { // 当前后要求请求的行业ID数据不相同的时候才发起请求
             messageUpstream.industryId = this.state.setIndustryId
@@ -224,9 +239,10 @@ export default class HomeContainer extends Component {
         // threeLevelCurrentFontColor : 当选中三级地区的时候，这里用的是短路运算，否定前面，执行被选中的
     }
     handleCountry =()=>{ // 点击全国地区发送空的字符串
+
         let regionObj = Object.assign({},this.state.setIndustryArr)
         regionObj.region = ''
-        this.setState({setIndustryArr:regionObj,region:'全国',rotateRegion:false,regionControl:true,backgroundColor:'#fff',fontSizecolor:'#00A0E9',clickIndex:null,fathContainerWidth:'100%',displayTotal:'none',threeLevelDisplay:'none',regiondisplay:'none',threelevelFontColor:'#333',oneLevelCountry:'1px solid #e1e1e1'})
+        this.setState({regionId:'',setIndustryArr:regionObj,region:'全国',rotateRegion:false,regionControl:true,backgroundColor:'#fff',fontSizecolor:'#00A0E9',clickIndex:null,fathContainerWidth:'100%',displayTotal:'none',threeLevelDisplay:'none',regiondisplay:'none',threelevelFontColor:'#333',oneLevelCountry:'1px solid #e1e1e1'})
         /*fathContainerWidth:'100%',displayTotal:'none' 在点击选中全国的时候,一级地区width:100%,整平幕显示,displayTotal:'none' 二级头上的全部进行隐藏 threeLevelDisplay : 三级地区全部隐藏 regiondisplay: 用户在选择到最后一级突然选择了全国，此时最后一级隐藏*/
     }
     handleThreeLevel =()=>{ // 点击选择最后的那个一级全部,将二级地区发送过去
@@ -253,12 +269,17 @@ export default class HomeContainer extends Component {
                 borderBottom:'1px solid #e1e1e1',height:'3.67rem',lineHeight:'3.67rem',textIndent:'1rem',color:this.state.threelevelFontColor,background:this.state.threeLevelBackgroundColor
             }
         }
-        /*let netWork  = JSON.parse(localStorage.getItem('internetOnline')).online
-        window.setInterval(internetStatus,500)*/
+
+        window.addEventListener('onffline',function(){
+            window.navigator.onLine
+
+        })
+        window.addEventListener('online',function(){
+            window.navigator.onLine
+        })
         if(!window.navigator.onLine){
             return this.handleInternet()
         }
-
         return (
             <div className='upStream'>
                 <div className='upStreamTopbox'>
@@ -293,7 +314,7 @@ export default class HomeContainer extends Component {
                         <div className='RegionSetContainer'>
                             <div onClick={(event)=>{event.stopPropagation();this.handleCountry()}}   style={{width:this.state.fathContainerWidth,background:this.state.backgroundColor,height:'3.67rem',lineHeight:'3.67rem',color:this.state.fontSizecolor,fontSize:'1.17rem',textIndent:'1rem',borderBottom:this.state.oneLevelCountry}}>全国</div>
                             {
-                                RegionData.map((value,indexs)=>{
+                                this.state.local && JSON.parse(this.state.local).map((value,indexs)=>{
                                     return (
                                         <Region
                                             key={indexs}
@@ -386,4 +407,5 @@ export default class HomeContainer extends Component {
         )
     }
 }
+
 

@@ -56,7 +56,7 @@ var BaseModal = function (_React$Component) {
           )
         );
         // 当关闭modal时，不要忘记设置 css = '';
-        var css = 'overflow:hidden; position:fixed; left:0; top:0; bottom:0;';
+        var css = 'overflow:hidden; position:absolute; left:0; top:0; bottom:0;';
         document.body.style.cssText = css;
       }
       return _react2.default.createElement(

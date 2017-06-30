@@ -70,6 +70,7 @@ class Sliders extends Component {
 
 	}
 	render() {
+
 		var aStyles = {
 			width: document.documentElement.clientWidth + "px"
 		}

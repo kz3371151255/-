@@ -52,6 +52,8 @@ a{
 
 html{
     min-width: 320px;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
 }
 
  /*超小平小于768px*/
@@ -87,18 +89,20 @@ html,body{
     width: 100%;
     height: 100%;
     background-color: #F5f5f5;
-    overflow: hidden;
+
 }
 
 #app{
     width: 100%;
     height: 100%;
     margin: 0 auto;
-    overflow-x: hidden;
+    position: relative;
+    overflow: hidden;
 }
 #app > :nth-child(1){
     height: 100%;
     width: 100%;
+    overflow: hidden;
 }
 
 .whitepoint {

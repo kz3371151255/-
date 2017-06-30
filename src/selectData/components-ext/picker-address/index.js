@@ -4,7 +4,7 @@ import { provins, citys, areas } from './address.js';
 import './index.scss';
 
 const propTypes = {
-  defaultValue: React.PropTypes.array.isRequired, // 设置选择的数据
+  defaultValue: React.PropTypes.array.isRequired, // 设置选择的数据,要求是数组
   onConfirm: React.PropTypes.func.isRequired, // 点击完成按钮
   onCancel: React.PropTypes.func.isRequired, // 默认地区的选择
   onChange: React.PropTypes.func.isRequired, //改变的地区数据
@@ -17,15 +17,12 @@ class PickerAddress extends React.Component {
     this.props = props;
     this.address = [];
   }
-
-  initDefaultData () { // 初始化数据
-
+  initDefaultData () { // 初始化数据 :开始 this.props.defaultValue,是组件内传递的数据
     this.data = {
       provins: { // 省的数据
         list: provins,
-        defaultValue: this.props.defaultValue[0], // 数组中的第一位:表示的省级
+        defaultValue: this.props.defaultValue[0], //默认显示数组中的第一位,
         displayValue (name) {
-
           return name;
         }
       },
@@ -46,7 +43,7 @@ class PickerAddress extends React.Component {
     }
   }
 
-  handleChangeProvin (provin) {   // 只需要传递省份,就能匹配市，县
+  handleChangeProvin (provin) {   //当滚动改变省时,将于省对应的市县,推到同一个数组中
     this.data.provins = {
       list: provins,
       defaultValue: provin,
@@ -59,14 +56,14 @@ class PickerAddress extends React.Component {
       list: areas[citys[provin][0]],
       defaultValue: areas[citys[provin][0]][0],
     },
-    this.address = []; // 省市县 推到同一个数组中
+    this.address = []; // 省市县选中要展示的,推到同一个数组中
     this.address.push(provin);
     this.address.push(citys[provin][0]);
     this.address.push(areas[citys[provin][0]][0]);
     this.props.onChange(this.address);
   }
 
-  handleChangeCity(city) {
+  handleChangeCity(city) { // 当滚动改变市时候,将市和他对应的数据添加到一个数组中
     this.address[1] = city;
     this.address[2] = areas[city][0];
     this.data.areas = {
@@ -90,7 +87,7 @@ class PickerAddress extends React.Component {
   }
 
   render () {
-    this.initDefaultData();
+    this.initDefaultData();// 初始化数据的显示
     return <div className="ui-picker-address">
       <Popup
         onConfirm={this.handleClose.bind(this)}

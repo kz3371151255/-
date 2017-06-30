@@ -1,18 +1,18 @@
-// ÏîÄ¿Èë¿ÚÎÄ¼ş
+// é¡¹ç›®å…¥å£æ–‡ä»¶
 import React,{Component} from 'react'
 import ReactDOM from 'react-dom'
 
 import '../style/root.css'
 import Routers from './Routers.js'
-require('array-polyfill.js')  //½â¾öÊı×éµÄmap ±éÀúµÄ¼æÈİÎÊÌâµÄµæÆ¬
-require('es6-object-assign').polyfill(); // ½â¾öObject ¶ÔÏóµÄµæÆ¬
+require('array-polyfill.js')  //è§£å†³æ•°ç»„çš„map éå†çš„å…¼å®¹é—®é¢˜çš„å«ç‰‡
+require('es6-object-assign').polyfill(); // è§£å†³Object å¯¹è±¡çš„å«ç‰‡
 require('es6-promise').polyfill();
 var axios = require('axios');
 class Enter extends Component{
     render(){
-        return <div style={{height:'100%',width:'100%'}}>
-            {this.props.children}
-        </div>
+        return <div style={{height:'100%',width:'100%',overflow:'hidden'}}>
+                   {this.props.children}
+              </div>
     }
 }
 

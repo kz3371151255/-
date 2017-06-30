@@ -1,4 +1,4 @@
-export const  RegionData  =  [
+export const  RegionData  = [
     {
         "areaList": [
             {

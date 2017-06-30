@@ -4,12 +4,9 @@
 import React, { Component } from 'react'
 import CSSModules from 'react-css-modules'
 import styles from './style.css'
-
 import Sliders from './Sliders'
 import Dots from './Dots'
-
 var SlideInter;
-
 class Slide extends Component {
 	constructor(props) {
 		super(props)
@@ -32,6 +29,7 @@ class Slide extends Component {
 	}
 
 	touchStart (e) {
+		e.stopPropagation()
 		this.setState({
 			time: 0,
 			startX: e.touches[0].pageX
@@ -39,6 +37,8 @@ class Slide extends Component {
 	}
 
 	touchMove (e) {
+		e.preventDefault()
+		e.stopPropagation()
 		if(this.state.autoSlide) {
 			this.stopSlideFun();
 		}
@@ -55,6 +55,7 @@ class Slide extends Component {
 	}
 
 	touchEnd (e) {
+		e.stopPropagation()
 		if(Math.abs(this.state.moveX) <= this.state.swiper) { // 当移动的距离小于30
 			this.slideFun('', '.5')
 		} else {
@@ -175,15 +176,13 @@ class Slide extends Component {
 
 		var slideStyle = {
 			width: (document.documentElement.clientWidth * (opts.length + 2)) + "px",
-			WebkitTransform: 'translate3d(' + this.state.distance + "px,0,0)",
-			transform: 'translate3d(' + this.state.distance + "px,0,0)",
+			left: this.state.distance + "px",
 			WebkitTranstion: "all " + this.state.time + "s",
 			transition: "all " + this.state.time + "s"
 		}
 
 		var sliders = opts.map((item, i) => {
 			return (
-
 				<Sliders sliderIndex={this.props.slider[i]} id={item.src} link={item.link} src={item.src} key={i}  />
 			)
 		})
@@ -196,11 +195,13 @@ class Slide extends Component {
 		}) 
 
 		return (
+
 			<div className="slide-wrap">
 				<div className="slide-ul" style={slideStyle} onTouchStart={e=>this.touchStart(e)} onTouchMove={e=>this.touchMove(e)} onTouchEnd={e=>this.touchEnd(e)} onTransitionEnd={()=>this.autoSlideFun()}>
 					{this.state.continuous ? <Sliders sliderIndex={this.props.slider}   link={opts[opts.length-1].link} src={opts[opts.length-1].src} picWidth={this.state.baseWidth} /> : "" }
 					{sliders} 
 					{this.state.continuous ? <Sliders sliderIndex={this.props.slider}  link={opts[0].link} src={opts[0].src} picWidth={this.state.baseWidth} /> : ""}
+
 				</div>
 				<div className="dots-wrap">
 					{

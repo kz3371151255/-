@@ -2,7 +2,7 @@ $itemHeight: 35px;
 
 .ui-picker-wrapper {
   width: 100%;
-  height: 180px;
+  height: 14.7rem;
   overflow: hidden;
   position: relative;
   pointer-events: auto;
@@ -11,8 +11,8 @@ $itemHeight: 35px;
     transition: transform;
     transition-duration: .3s;
     transition-timing-function: ease-out;
+    position: absolute;
   }
-
   .ui-picker-item {
     height: $itemHeight;
     line-height: $itemHeight;

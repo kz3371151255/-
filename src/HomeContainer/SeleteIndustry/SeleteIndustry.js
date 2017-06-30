@@ -8,17 +8,11 @@ import { Card } from '../../common/levelMenu/levelMenu.jsx'
 import  service from  '../../services/movieService.js'
 import {Industry} from'../../data/industry.js'
 import {browserHistory} from 'react-router'
-
+import {rem} from '../../js/rem.js'
 var uuu = navigator.userAgent;
 var isIos=!!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)==true;
-if(isIos){
-    window.webkit && window.webkit.messageHandlers.getIndustryList.postMessage(null);
-    window.IndustryList = 111;
-    window.handleFromIosData = function(getIndustryData){
-        IndustryList = getIndustryData || '没有获取到数 据'
-        return IndustryList
-    }
-}
+var isAndroid=uuu.indexOf('Android') > -1 || uuu.indexOf('Linux') > -1;
+
 export default class SeleteIndustry extends Component {
        constructor (props){
             super(props)
@@ -26,7 +20,7 @@ export default class SeleteIndustry extends Component {
                 setIndustryArr:[],
                 local:'',
                 changShow:true,
-                totalShow:true,
+                totalShow:false,
                 userId:JSON.parse(localStorage.getItem('localUserId')).userId,
                 borderNone:'',
                 message:{
@@ -36,25 +30,25 @@ export default class SeleteIndustry extends Component {
               }
        }
     componentWillMount(){ // 这里直接通过路由传递的useId值
+        window.handleGoBackHome=()=>{
+            this.handleGoBackHome()
+        }
         let selectIndustry = JSON.parse(this.props.params.userId)
         this.state.message.type = selectIndustry.type
 
         this.setState({userId:selectIndustry.userId})
 
         this.fetchSetIndustry()
-        this.setState({local:this.getLianData.bind(this)()})
-
-
-    }
-    getLianData =()=>{// 拦截 android 和 ios 的 数据
-        var uuu = navigator.userAgent;
-        var isAndroid=uuu.indexOf('Android') > -1 || uuu.indexOf('Linux') > -1;
-        var isIos=!!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)==true;
-        if(isIos) {
-            return window.IndustryList
+        if(isIos){
+            window.handleFromIosData =(industryData)=>{
+                this.setState({local:industryData})
+            }
+            window.webkit && window.webkit.messageHandlers.getIndustryList.postMessage(null);
         }else if(isAndroid){
-            return   window.androidJsInterface && window.androidJsInterface.getIndustry()
+            window.androidJsInterface && this.setState({local:window.androidJsInterface.getIndustry()})
         }
+
+
     }
 
     fetchSetIndustry =()=>{
@@ -91,6 +85,21 @@ export default class SeleteIndustry extends Component {
             <div onClick={this.handleSetIndustry.bind(this,value.industryId,value.industryName)} className={index == this.state.setIndustryArr.length-1 ?'detailBorderNone':'detailIndustry'} key={index}>{value.industryName}</div>
         )
     }
+    handleGoBackHome  = () =>{
+        let  handleSetObj = new Object()
+             handleSetObj.userId = JSON.parse(this.props.params.userId).userId
+        let handleStr = JSON.stringify(handleSetObj)
+        if(JSON.parse(this.props.params.userId).tralvel == 'tralvel') {
+
+            browserHistory.push(`/container/movie/${handleStr}`)
+
+        }else if(JSON.parse(this.props.params.userId).downStream == 'downStream') {
+            browserHistory.push(`/container/downstream/${handleStr}`)
+        }else {
+            browserHistory.push(`/container/home/${handleStr}`)
+        }
+
+   }
     handleChangeButtton =()=>{// 点击切换显示关注行业按钮
            this.setState({changShow:!this.state.changShow})
     }
@@ -127,7 +136,8 @@ export default class SeleteIndustry extends Component {
             return this.handleInternet()
         }
         return(
-            <div className='concernedIdustry'>
+            <div style={{overflow:'scroll',height:'100%'}}>
+               <div className='concernedIdustry'>
                 <div className='concernedSelect' onClick={this.handleChangeButtton}>
                     从关注行业中进行选择
                     <span className={this.state.changShow?'concernedShow':'conceredHidden'}></span>
@@ -141,7 +151,7 @@ export default class SeleteIndustry extends Component {
                 </div>
                 <div className={this.state.totalShow?'industryMenuShow':'industryMenuHidden'}>
                     {
-                        Industry.map((value, index)=> {
+                        this.state.local && JSON.parse(this.state.local).map((value, index)=> {
                             return <Card
                                 key={index}
                                 icon={true}
@@ -294,6 +304,7 @@ export default class SeleteIndustry extends Component {
                     }
 
                 </div>
+            </div>
             </div>
         )
 

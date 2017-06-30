@@ -172,7 +172,7 @@ var RecomConent = function (_Component) {
         _this2.handleRecomContent = function () {
             return _react2.default.createElement(
                 'div',
-                { className: 'findeResult', ref: 'scroll_container' },
+                { className: 'region', ref: 'scroll_container' },
                 _this2.state.detailData.map(_this2.handelRender)
             );
         };

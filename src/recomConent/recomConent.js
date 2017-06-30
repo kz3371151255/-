@@ -19,7 +19,7 @@ class RecomConent extends Component {
             detailData:[],
             lastOrgId:'',
             detailLength:'',
-            pullUp:1,
+            isButton:'',
             messages:{
                 count:20,
                 beginOrgId:0,
@@ -34,6 +34,7 @@ class RecomConent extends Component {
         }
     }
     componentWillMount(){
+
         this.state.messages.userId = parseInt(JSON.parse(this.props.userId).userId)
 
     }
@@ -42,7 +43,7 @@ class RecomConent extends Component {
         this.fetch(this.state.messages)
     }
     componentDidUpdate(){ //检测到state 和 props 变化就执行
-          if(this.props.pullUpLoading ){
+          if(this.refs.scroll_container ){
               this.addEventListener()
 
           }
@@ -84,20 +85,20 @@ class RecomConent extends Component {
     addEventListener=()=>{
         const _this=this
 
-        this.props.pullUpLoading.addEventListener('scroll',(e)=>{
+       this.refs.scroll_container.addEventListener('scroll',(e)=>{
 
-            if(e.target.scrollHeight-2 <=e.target.scrollTop + e.target.offsetHeight){
+            if(e.target.scrollHeight-3 <=e.target.scrollTop + e.target.offsetHeight){
 
                 if(_this.state.isButton){
                     return
                 }
-                // 在发送请求之前将上一次的 orgId 回传
+                // 在发送请求之前将上一次的 orgId 回传      
                 if(this.state.datamessage.flag ==1){
                     return
                 }
 
                 _this.fetch(this.state.messages,this.state.lastOrgId)
-                _this.setState({isButton:true,pullUp:++this.state.pullUp})
+                _this.setState({isButton:true})
             }
         })
     }
@@ -105,7 +106,6 @@ class RecomConent extends Component {
         var _this = this // 保存全局 this
         let message = Object.assign({}, messages)
         message.beginOrgId = this.state.lastOrgId && beginOrgId
-        console.log(this.state.lastOrgId)
         const messageStr = JSON.stringify(message)
         let detailData = [].concat(this.state.detailData)
         const promise = service.getRecomConentData(messageStr)
@@ -130,8 +130,8 @@ class RecomConent extends Component {
                 })
             }else {
                 json = JSON.parse(json)
-                _this.setState({datamessage: json, isLoading: false})
-                _this.setState({lastOrgId: json.lastOrgId})
+                _this.setState({datamessage: json, isLoading: false,lastOrgId: json.lastOrgId, isButton:false})
+
                 if (detailData.length > 0) {
                     detailData = detailData.concat(json.orgList)
                 } else {
@@ -139,11 +139,9 @@ class RecomConent extends Component {
                 }
                 // 获取到数据之后 去掉遮罩 ，加载数据提示去掉
                 _this.setState({ // 同步还是异步
-                    isLoading: false,
                     detailData: detailData,
                     detailLength:detailData.length-1,
                     messages: message,
-                    isButton:false
                 })
 
             }

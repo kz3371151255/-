@@ -13,9 +13,10 @@ export class Card extends Component{
         })
     }
     render(){  // contentStyle 包裹子元素的盒子
-        const { handleIndutiyClick , expanded , content , onExpandChange , style , className , contentStyle , icon , iconStyle, expandedIcon , noexpandedIcon,index,borderBottomStyle} = this.props
+
+        const { handleIndutiyClick , expanded , content , onExpandChange , style , className , contentStyle , icon , iconStyle, expandedIcon , noexpandedIcon,index,borderBottomStyle,childHeight} = this.props
         var toggle = expanded != undefined ? expanded : this.state.expanded
-        return <div className = { className && className } style={{position:'relative'}}>
+        return <div className = { className && className } style={{position:'relative',height:'auto'}}>
             <div
                 style={{width:'100%',margin:0,padding:0,boxSizing:'border-box',...style}}
                 onClick = {() =>{
@@ -25,7 +26,7 @@ export class Card extends Component{
                 } }
             >
                 <div style={{position:'relative',height:'4rem'}}>
-                    <div onClick={handleIndutiyClick && handleIndutiyClick.bind(this,index,toggle)}>{content}</div>
+                    <div onClick={handleIndutiyClick && handleIndutiyClick.bind(this,index,toggle)} style={{height:childHeight}}>{content}</div>
 
                     <span className="left_Icon" style = {iconStyle && {...iconStyle}}>
                         { icon && this.props.children && (toggle ? (expandedIcon ? expandedIcon : '↑') : (noexpandedIcon ? noexpandedIcon : '↓'))}

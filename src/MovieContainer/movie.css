@@ -33,10 +33,10 @@
 }
 .tralvelDetail {
     width: 100%;
-    height: calc(100% - 7.41rem);
+    height: calc(100% - 7.4rem);
     overflow-y: scroll;
     position: absolute;
-    top: 7.41rem;
+    top: 7.4rem;
 }
 .responseIndustryBlockM {
     position: relative;

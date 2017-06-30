@@ -4,16 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
     <title>找组织</title>
+    <script>
+        document.documentElement.style.fontSize = window.innerWidth /31.25 +'px';
+        console.log(document.documentElement.style.fontSize)
+        onresize = function(){
+            document.documentElement.style.fontSize = window.innerWidth /31.25 +'px';
+        }
+       /* if(window.innerWidth != 980){
+            window.clearInterval(window.fontTime)
+            document.documentElement.style.fontSize = window.innerWidth /31.25 +'px';
+            window.onresize = function() {
+                document.documentElement.style.fontSize = window.innerWidth / 31.25 + 'px';
+            }
+        }
+        window.fontTime = window.setInterval(function(){
+            document.documentElement.style.fontSize = window.innerWidth /31.25 +'px';
+            window.onresize = function() {
+                document.documentElement.style.fontSize = window.innerWidth / 31.25 + 'px';
+            }
+        },100)
+
+        if(window.innerWidth != 980){
+            window.clearInterval(window.fontTime)
+        }*/
+    </script>
+
 </head>
 <body>
 <div id="app"></div>
-
 </body>
-
-<script>
-    document.documentElement.style.fontSize = innerWidth /31.25 +'px';
-    onresize = function(){
-        document.documentElement.style.fontSize = innerWidth /31.25 +'px';
-    }
-</script>
 </html>

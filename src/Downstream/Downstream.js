@@ -1,6 +1,6 @@
-/*
- * 首页容器组件
- * */
+///*
+// * 首页容器组件
+// * */
 import React, { Component} from 'react'
 import '../HomeContainer/Home/Home.css'
 import service from '../services/movieService.js'
@@ -8,18 +8,11 @@ import {browserHistory} from 'react-router'
 import UpstreamDetaildata from '../HomeContainer/UpstreamDetaildata/UpstreamDetaildata.js'
 import {Region} from '../common/Region/Region.js'
 import  {RegionData} from  '../data/region.js'
-
+import {pathParams} from '../js/config.js'
+import {rem} from '../js/rem.js'
 var uuu = navigator.userAgent;
 var isIos=!!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)==true;
-if(isIos){
-    window.webkit && window.webkit.messageHandlers.getAreaList.postMessage(null);
-    window.txt = 111;
-    window.handleAreaFromIosData  = function(getArea){
-        txt = getArea || '没有获取到数 据'
-        return txt
-    }
-}
-
+var isAndroid=uuu.indexOf('Android') > -1 || uuu.indexOf('Linux') > -1;
 export default class Downstream extends Component {
     constructor(props) {
         super(props)
@@ -78,19 +71,33 @@ export default class Downstream extends Component {
         }
     }
     componentWillMount(){ //通过路由传递 userId,用户的useId 肯定是有的
+        window.handleGoBackHome = ()=>{
+            this.handleCloseWindow()
+        }
         let downObj = new Object()  // 页面初始的时候就要保证 类型
             downObj.type = 2
         this.setState({setIndustryArr:downObj})
 
         document.title = '找下游'
         let userProps = JSON.stringify(this.props.location.query)
-        this.setState({userId:userProps,regiondisplay:'none',local:this.getLianData.bind(this)()})
+        this.setState({userId:userProps,regiondisplay:'none'})
 
         this.fetch(this.state.message)
-
+        if(isIos){
+            window.handleAreaFromIosData  = (areaData)=>{
+                this.setState({local:areaData,iosDisplay:'block'})
+            }
+            window.webkit && window.webkit.messageHandlers.getAreaList.postMessage(null);
+        }else if(isAndroid) {
+            window.androidJsInterface && this.setState({local: window.androidJsInterface.getArea()})
+        }
 
     }
-
+    componentDidMount(){
+        if(!Boolean(this.props.params.homeUser)){
+            rem()
+        }
+    }
     getLianData =()=>{// 拦截 android 和 ios 的 数据
         var uuu = navigator.userAgent;
         var isAndroid=uuu.indexOf('Android') > -1 || uuu.indexOf('Linux') > -1;
@@ -101,11 +108,25 @@ export default class Downstream extends Component {
             return   window.androidJsInterface &&  window.androidJsInterface.getArea()
         }
     }
-
+    handleCloseWindow =() =>{ // 关闭andriod 浏览器
+        var uuu = navigator.userAgent;
+        var isAndroid=uuu.indexOf('Android') > -1 || uuu.indexOf('Linux') > -1;
+        var isIos=!!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)==true;
+        if(isAndroid){
+            return window.androidJsInterface && window.androidJsInterface.closeWindow()
+        }else if(isIos){
+            browserHistory.push('/')
+        }
+    }
     fetch =(message,internetFlag)=>{// 首次进入页面请求数据
         let messageObj = Object.assign({},message)
-
+        let location  =  JSON.stringify(this.props.location.query)
+        // let  locationuserId = JSON.parse(location).userId
         let  locationuserId =  JSON.parse(localStorage.getItem('localUserId')).userId
+        if(!JSON.parse(location).userId){
+            locationuserId = JSON.parse(this.props.params.homeUser).userId
+            /*locationuserId = 10382*/
+        }
 
         messageObj.userId = parseInt(locationuserId)
 
@@ -186,6 +207,7 @@ export default class Downstream extends Component {
             userId = JSON.parse(this.props.params.homeUser).userId
             /*userId = 10382*/
         }
+
         let DownObj = new Object()
         DownObj.downStream = 'downStream'
         DownObj.userId = parseInt(userId)
@@ -227,7 +249,7 @@ export default class Downstream extends Component {
     handleCountry =()=>{ // 点击全国地区发送空的字符串
         let regionObj = Object.assign({},this.state.setIndustryArr)
         regionObj.region = ''
-        this.setState({setIndustryArr:regionObj,region:'全国',rotateRegion:false,regionControl:true,backgroundColor:'#fff',fontSizecolor:'#00A0E9',clickIndex:null,fathContainerWidth:'100%',displayTotal:'none',threeLevelDisplay:'none',regiondisplay:'none',threelevelFontColor:'#333',oneLevelCountry:'1px solid #e1e1e1'})
+        this.setState({regionId:'',setIndustryArr:regionObj,region:'全国',rotateRegion:false,regionControl:true,backgroundColor:'#fff',fontSizecolor:'#00A0E9',clickIndex:null,fathContainerWidth:'100%',displayTotal:'none',threeLevelDisplay:'none',regiondisplay:'none',threelevelFontColor:'#333',oneLevelCountry:'1px solid #e1e1e1'})
         /*fathContainerWidth:'100%',displayTotal:'none' 在点击选中全国的时候,一级地区width:100%,整平幕显示,displayTotal:'none' 二级头上的全部进行隐藏 threeLevelDisplay : 三级地区全部隐藏 regiondisplay: 用户在选择到最后一级突然选择了全国，此时最后一级隐藏*/
     }
     handleThreeLevel =()=>{ // 点击选择最后的那个一级全部,将二级地区发送过去
@@ -291,8 +313,9 @@ export default class Downstream extends Component {
                     <div className='RegionSet'>
                         <div className='RegionSetContainer'>
                             <div onClick={(event)=>{event.stopPropagation();this.handleCountry()}}   style={{width:this.state.fathContainerWidth,background:this.state.backgroundColor,height:'3.67rem',lineHeight:'3.67rem',color:this.state.fontSizecolor,fontSize:'1.17rem',textIndent:'1rem',borderBottom:this.state.oneLevelCountry}}>全国</div>
+
                             {
-                                RegionData.map((value,indexs)=>{
+                                this.state.local && JSON.parse(this.state.local).map((value,indexs)=>{
                                     return (
                                         <Region
                                             key={indexs}
@@ -372,10 +395,47 @@ export default class Downstream extends Component {
                         </div>
                     </div>
                 </div>
-                <div className='upStreamDetail'>
+                <div className='upStreamDetail' >
                     <UpstreamDetaildata upStreamArr ={this.state.setIndustryArr}/>
                 </div>
             </div>
         )
     }
 }
+/*var uuu = navigator.userAgent;
+var isIos = !!uuu.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) == true;
+import React, { Component} from 'react'
+export default class HomeContainer extends Component {
+
+    constructor(props) {
+        super(props)
+
+        this.state = {ttt: ""}
+    }
+
+    componentWillMount() {
+        if (isIos) {
+            window.handleAreaFromIosData = (areaDate) => {
+                this.setState({ttt: areaDate})
+                window.handleAreaFromIosData = null;
+            }
+            window.webkit && window.webkit.messageHandlers.getAreaList.postMessage(null);
+        }
+
+
+    }
+
+
+    render() {
+
+        return (
+            <div >
+                <div id="aaa">aaa</div>
+
+                test
+                {this.state.ttt}
+
+            </div>
+        );
+    }
+}*/
